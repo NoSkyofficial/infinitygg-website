@@ -1,32 +1,46 @@
-- name: Send commit to Discord
-  env:
-    DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-  run: |
-    COMMIT_HASH=$(git rev-parse --short HEAD)
-    COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-    COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
-    COMMIT_URL="https://github.com/NoSkyofficial/infinitygg-website/commit/$COMMIT_HASH"
+name: Discord Notification on Push
 
-    FOOTER_TEXT="Author: $COMMIT_AUTHOR"
+on:
+  push:
+    branches:
+      - main
 
-    PAYLOAD=$(jq -n \
-      --arg title "📦 New commit in infinitygg-website" \
-      --arg author "$COMMIT_AUTHOR" \
-      --arg message "$COMMIT_MESSAGE" \
-      --arg url "$COMMIT_URL" \
-      --arg footer "$FOOTER_TEXT" \
-      '{
-        "embeds": [
-          {
-            "title": $title,
-            "url": $url,
-            "description": $message,
-            "color": 3066993,
-            "footer": { "text": $footer }
-          }
-        ]
-      }')
+jobs:
+  discord-notify:
+    runs-on: ubuntu-latest
 
-    curl -H "Content-Type: application/json" \
-         -d "$PAYLOAD" \
-         "$DISCORD_WEBHOOK"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Send commit to Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
+          COMMIT_URL="https://github.com/NoSkyofficial/infinitygg-website/commit/$COMMIT_HASH"
+
+          FOOTER_TEXT="Author: $COMMIT_AUTHOR"
+
+          PAYLOAD=$(jq -n \
+            --arg title "📦 New commit in infinitygg-website" \
+            --arg message "$COMMIT_MESSAGE" \
+            --arg url "$COMMIT_URL" \
+            --arg footer "$FOOTER_TEXT" \
+            '{
+              "embeds": [
+                {
+                  "title": $title,
+                  "url": $url,
+                  "description": $message,
+                  "color": 3066993,
+                  "footer": { "text": $footer }
+                }
+              ]
+            }')
+
+          curl -H "Content-Type: application/json" \
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK"
