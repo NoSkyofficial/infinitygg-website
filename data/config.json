@@ -1,0 +1,38 @@
+{
+  "showProgressBar": true,
+  "progressValue": 65,
+  "progressLabel": "Etap beta",
+  "showStatus": true,
+  "showFAQ": true,
+  "showShopRedirect": true,
+  "showBetaBadge": true,
+  "heroTitle": "Witaj na InfinityGG",
+  "heroLead": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc in gravida diam, eu eleifend magna. Ut tempus ultrices mi quis porta. Sed sollicitudin sem commodo, aliquam augue vitae, rutrum tortor.",
+  "faqs": [
+    {
+      "id": "1",
+      "question": "Jak dołączyć do serwera?",
+      "answer": "Dołącz na nasz serwer Discord, zapoznaj się z regulaminem i wypełnij aplikację. Po zaakceptowaniu otrzymasz dostęp do serwera."
+    },
+    {
+      "id": "2",
+      "question": "Czy serwer jest darmowy?",
+      "answer": "Tak, gra na serwerze jest całkowicie darmowa. W sklepie znajdziesz opcjonalne dodatki kosmetyczne, które wspierają rozwój projektu."
+    },
+    {
+      "id": "3",
+      "question": "Jakie są wymagania techniczne?",
+      "answer": "Potrzebujesz oryginalnej kopii GTA V oraz FiveM. Zalecamy minimum 8GB RAM i stabilne połączenie internetowe."
+    },
+    {
+      "id": "4",
+      "question": "Czy mogę grać z konsoli?",
+      "answer": "Nie, serwer wymaga PC z systemem Windows oraz FiveM. Konsole nie są wspierane."
+    }
+  ],
+  "socialLinks": {
+    "discord": true,
+    "twitter": true,
+    "youtube": true
+  }
+}

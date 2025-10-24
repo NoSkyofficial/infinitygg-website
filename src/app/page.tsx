@@ -5,8 +5,8 @@ import { ChevronDown, Menu, X, Users, ExternalLink, Twitter, Youtube, MessageCir
 import { SiDiscord } from "react-icons/si";
 import AdminPanel from './components/AdminPanel';
 
-// ==================== CONFIG SERVICE ====================
-interface SiteConfig {
+// ==================== TYPES ====================
+export interface SiteConfig {
   showProgressBar: boolean;
   progressValue: number;
   progressLabel: string;
@@ -24,90 +24,12 @@ interface SiteConfig {
   };
 }
 
-interface FAQ {
+export interface FAQ {
   id: string;
   question: string;
   answer: string;
 }
 
-class ConfigService {
-  private static readonly STORAGE_KEY = 'infinitygg_config';
-  
-  static getDefaultConfig(): SiteConfig {
-    return {
-      showProgressBar: true,
-      progressValue: 65,
-      progressLabel: 'Etap beta',
-      showStatus: true,
-      showFAQ: true,
-      showShopRedirect: true,
-      showBetaBadge: true,
-      heroTitle: 'Witaj na InfinityGG',
-      heroLead: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc in gravida diam, eu eleifend magna. Ut tempus ultrices mi quis porta. Sed sollicitudin sem commodo, aliquam augue vitae, rutrum tortor.',
-      faqs: [
-        {
-          id: '1',
-          question: 'Jak dołączyć do serwera?',
-          answer: 'Dołącz na nasz serwer Discord, zapoznaj się z regulaminem i wypełnij aplikację. Po zaakceptowaniu otrzymasz dostęp do serwera.'
-        },
-        {
-          id: '2',
-          question: 'Czy serwer jest darmowy?',
-          answer: 'Tak, gra na serwerze jest całkowicie darmowa. W sklepie znajdziesz opcjonalne dodatki kosmetyczne, które wspierają rozwój projektu.'
-        },
-        {
-          id: '3',
-          question: 'Jakie są wymagania techniczne?',
-          answer: 'Potrzebujesz oryginalnej kopii GTA V oraz FiveM. Zalecamy minimum 8GB RAM i stabilne połączenie internetowe.'
-        },
-        {
-          id: '4',
-          question: 'Czy mogę grać z konsoli?',
-          answer: 'Nie, serwer wymaga PC z systemem Windows oraz FiveM. Konsole nie są wspierane.'
-        }
-      ],
-      socialLinks: {
-        discord: true,
-        twitter: true,
-        youtube: true
-      }
-    };
-  }
-  
-  static loadConfig(): SiteConfig {
-    if (typeof window === 'undefined') return this.getDefaultConfig();
-    
-    try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        return { ...this.getDefaultConfig(), ...JSON.parse(stored) };
-      }
-    } catch (e) {
-      console.error('Failed to load config:', e);
-    }
-    return this.getDefaultConfig();
-  }
-  
-  static saveConfig(config: SiteConfig): void {
-    if (typeof window === 'undefined') return;
-    
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(config));
-    } catch (e) {
-      console.error('Failed to save config:', e);
-    }
-  }
-  
-  static exportConfig(config: SiteConfig): string {
-    return JSON.stringify(config, null, 2);
-  }
-  
-  static importConfig(json: string): SiteConfig {
-    return { ...this.getDefaultConfig(), ...JSON.parse(json) };
-  }
-}
-
-// ==================== STATUS SERVICE ====================
 interface ServerStatus {
   playersOnline: number;
   maxPlayers: number;
@@ -115,6 +37,32 @@ interface ServerStatus {
   status: 'online' | 'offline' | 'full';
 }
 
+// ==================== CONTEXT ====================
+const ConfigContext = createContext<{
+  config: SiteConfig;
+  updateConfig: (config: SiteConfig) => Promise<void>;
+  regulaminEditEnabled: boolean;
+  setRegulaminEditEnabled: (enabled: boolean) => void;
+}>({
+  config: {
+    showProgressBar: true,
+    progressValue: 65,
+    progressLabel: 'Etap beta',
+    showStatus: true,
+    showFAQ: true,
+    showShopRedirect: true,
+    showBetaBadge: true,
+    heroTitle: 'Witaj na InfinityGG',
+    heroLead: '',
+    faqs: [],
+    socialLinks: { discord: true, twitter: true, youtube: true }
+  },
+  updateConfig: async () => {},
+  regulaminEditEnabled: false,
+  setRegulaminEditEnabled: () => {}
+});
+
+// ==================== STATUS SERVICE ====================
 class StatusService {
   private static pollingInterval: NodeJS.Timeout | null = null;
   
@@ -150,15 +98,6 @@ class StatusService {
     }
   }
 }
-
-// ==================== CONTEXT ====================
-const ConfigContext = createContext<{
-  config: SiteConfig;
-  updateConfig: (config: SiteConfig) => void;
-}>({
-  config: ConfigService.getDefaultConfig(),
-  updateConfig: () => {}
-});
 
 // ==================== ANIMATED BACKGROUND ====================
 const AnimatedBackground: React.FC = () => {
@@ -234,7 +173,7 @@ const Header: React.FC<{ onAdminClick: () => void }> = ({ onAdminClick }) => {
               Strona Główna
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#26a69a] group-hover:w-full transition-all duration-300" />
             </a>
-            <a href="/wip" className="text-gray-300 hover:text-[#26a69a] transition-colors relative group">
+            <a href="/regulamin" className="text-gray-300 hover:text-[#26a69a] transition-colors relative group">
               Regulamin
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#26a69a] group-hover:w-full transition-all duration-300" />
             </a>
@@ -324,7 +263,7 @@ const Header: React.FC<{ onAdminClick: () => void }> = ({ onAdminClick }) => {
   );
 };
 
-// Progress Bar Component - teraz sticky
+// Progress Bar Component
 const ProgressBar: React.FC = () => {
   const { config } = useContext(ConfigContext);
   
@@ -560,46 +499,6 @@ const FAQAccordion: React.FC = () => {
   );
 };
 
-// Shop Section
-/* const ShopSection: React.FC = () => {
-  const { config } = useContext(ConfigContext);
-  
-  if (!config.showShopRedirect) return null;
-  
-  return (
-    <section id="sklep" className="py-20 px-4 relative">
-      <div className="max-w-3xl mx-auto text-center">
-        <div className="relative bg-gradient-to-br from-gray-900/80 to-gray-900/50 backdrop-blur-sm border border-[#26a69a]/30 rounded-3xl p-12 hover:border-[#26a69a]/50 transition-all group">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#26a69a]/0 to-[#26a69a]/0 group-hover:from-[#26a69a]/10 group-hover:to-transparent transition-all" />
-          
-          <div className="relative z-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#26a69a] to-[#00897b] rounded-2xl mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-[#26a69a]/30">
-              <ExternalLink className="w-8 h-8 text-white" />
-            </div>
-            
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Sklep <span className="text-[#26a69a]">InfinityGG</span>
-            </h2>
-            <p className="text-xl text-gray-300 mb-8">
-              Wesprzyj rozwój serwera i zdobądź ekskluzywne dodatki kosmetyczne.
-            </p>
-            
-            <a
-              href="https://infinitygg.tebex.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#26a69a] to-[#00897b] hover:from-[#00897b] hover:to-[#26a69a] text-white font-semibold rounded-xl transition-all shadow-lg shadow-[#26a69a]/30 hover:shadow-[#26a69a]/50 hover:scale-105 group"
-            >
-              Przejdź do sklepu
-              <ExternalLink className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}; */
-
 // Footer
 const Footer: React.FC = () => {
   const year = new Date().getFullYear();
@@ -623,25 +522,19 @@ const Footer: React.FC = () => {
               <a href="https://discord.gg/infinitygg" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
                 Discord
               </a>
-              {/* <a href="https://twitter.com/infinitygg" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
-                Twitter
-              </a>
-              <a href="https://youtube.com/@infinitygg" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
-                YouTube
-              </a> */}
             </div>
           </div>
           
           <div>
             <h3 className="text-white font-bold text-lg mb-4">Dokumenty</h3>
             <div className="space-y-2">
-              <a href="/wip" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
+              <a href="/regulamin" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
                 Regulamin
               </a>
-              <a href="/wip" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
+              <a href="/tos" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
                 Terms of Service
               </a>
-              <a href="/wip" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
+              <a href="/privacy" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
                 Privacy Policy
               </a>
             </div>
@@ -666,20 +559,66 @@ const Footer: React.FC = () => {
 
 // Main App
 export default function InfinityGGWebsite() {
-  const [config, setConfig] = useState<SiteConfig>(ConfigService.getDefaultConfig());
+  const [config, setConfig] = useState<SiteConfig>({
+    showProgressBar: true,
+    progressValue: 65,
+    progressLabel: 'Etap beta',
+    showStatus: true,
+    showFAQ: true,
+    showShopRedirect: true,
+    showBetaBadge: true,
+    heroTitle: 'Witaj na InfinityGG',
+    heroLead: '',
+    faqs: [],
+    socialLinks: { discord: true, twitter: true, youtube: true }
+  });
   const [showAdmin, setShowAdmin] = useState(false);
+  const [regulaminEditEnabled, setRegulaminEditEnabled] = useState(false);
+  const [authToken, setAuthToken] = useState('');
   
   useEffect(() => {
-    setConfig(ConfigService.loadConfig());
+    // Load config from API on mount
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => setConfig(data))
+      .catch(err => console.error('Failed to load config:', err));
+      
+    // Check if regulamin edit was enabled
+    const editEnabled = sessionStorage.getItem('regulaminEditEnabled') === 'true';
+    const token = sessionStorage.getItem('adminAuthToken') || '';
+    setRegulaminEditEnabled(editEnabled);
+    setAuthToken(token);
   }, []);
   
-  const updateConfig = (newConfig: SiteConfig) => {
-    setConfig(newConfig);
-    ConfigService.saveConfig(newConfig);
+  const updateConfig = async (newConfig: SiteConfig) => {
+    const token = authToken || sessionStorage.getItem('adminAuthToken') || '';
+    
+    const response = await fetch('/api/config', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(newConfig)
+    });
+    
+    if (response.ok) {
+      setConfig(newConfig);
+    } else {
+      throw new Error('Failed to save config');
+    }
+  };
+  
+  const enableRegulaminEdit = () => {
+    const token = authToken || sessionStorage.getItem('adminAuthToken') || ADMIN_PASS_HASH;
+    sessionStorage.setItem('regulaminEditEnabled', 'true');
+    sessionStorage.setItem('adminAuthToken', token);
+    setRegulaminEditEnabled(true);
+    setAuthToken(token);
   };
   
   return (
-    <ConfigContext.Provider value={{ config, updateConfig }}>
+    <ConfigContext.Provider value={{ config, updateConfig, regulaminEditEnabled, setRegulaminEditEnabled }}>
       <div className="min-h-screen">
         <AnimatedBackground />
         <Header onAdminClick={() => setShowAdmin(true)} />
@@ -687,10 +626,16 @@ export default function InfinityGGWebsite() {
         <Hero />
         <ValueCards />
         <FAQAccordion />
-        {/* <ShopSection /> */}
         <Footer />
         
-        {showAdmin && <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />}
+        {showAdmin && (
+          <AdminPanel 
+            config={config} 
+            updateConfig={updateConfig}
+            onClose={() => setShowAdmin(false)} 
+            onEnableRegulaminEdit={enableRegulaminEdit}
+          />
+        )}
         
         <style jsx global>{`
           @keyframes gradient {
@@ -741,4 +686,4 @@ export default function InfinityGGWebsite() {
   );
 }
 
-export { ConfigService, type SiteConfig, type FAQ };
+const ADMIN_PASS_HASH = process.env.NEXT_PUBLIC_ADMIN_PASS_HASH || '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';

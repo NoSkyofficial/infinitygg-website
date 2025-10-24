@@ -39,7 +39,7 @@ const LegalHeader: React.FC = () => {
             <a href="/" className="text-gray-300 hover:text-[#26a69a] transition-colors">
               Strona Główna
             </a>
-            <a href="/wip" className="text-gray-300 hover:text-[#26a69a] transition-colors">
+            <a href="/regulamin" className="text-gray-300 hover:text-[#26a69a] transition-colors">
               Regulamin
             </a>
             <a href="/tos" className="text-gray-300 hover:text-[#26a69a] transition-colors">

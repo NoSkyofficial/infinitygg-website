@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from 'react';
-import { X, Edit2, Trash2, Plus } from 'lucide-react';
-import { SiteConfig, FAQ, ConfigService } from '../page';
+import { X, Edit2, Trash2, Plus, FileEdit } from 'lucide-react';
+import { SiteConfig, FAQ } from '../page';
 
 interface AdminPanelProps {
   config: SiteConfig;
   updateConfig: (config: SiteConfig) => void;
   onClose: () => void;
+  onEnableRegulaminEdit?: () => void;
 }
 
 // Bezpieczniejsza weryfikacja hasła (SHA-256)
@@ -21,20 +22,23 @@ async function hashPassword(password: string): Promise<string> {
 
 const ADMIN_PASS_HASH = process.env.NEXT_PUBLIC_ADMIN_PASS_HASH || '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
 
-export default function AdminPanel({ config, updateConfig, onClose }: AdminPanelProps) {
+export default function AdminPanel({ config, updateConfig, onClose, onEnableRegulaminEdit }: AdminPanelProps) {
   const [localConfig, setLocalConfig] = useState<SiteConfig>(config);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
+  const [authToken, setAuthToken] = useState('');
   const [newQuestion, setNewQuestion] = useState('');
   const [newAnswer, setNewAnswer] = useState('');
   const [editingFAQ, setEditingFAQ] = useState<string | null>(null);
   const [editQuestion, setEditQuestion] = useState('');
   const [editAnswer, setEditAnswer] = useState('');
+  const [saving, setSaving] = useState(false);
   
   const handleLogin = async () => {
     const hashedInput = await hashPassword(password);
     if (hashedInput === ADMIN_PASS_HASH) {
       setAuthenticated(true);
+      setAuthToken(hashedInput);
       setPassword('');
     } else {
       alert('Nieprawidłowe hasło');
@@ -42,13 +46,21 @@ export default function AdminPanel({ config, updateConfig, onClose }: AdminPanel
     }
   };
   
-  const handleSave = () => {
-    updateConfig(localConfig);
-    alert('Konfiguracja zapisana!');
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateConfig(localConfig);
+      alert('Konfiguracja zapisana pomyślnie!');
+    } catch (error) {
+      alert('Błąd podczas zapisywania konfiguracji');
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
   };
   
   const handleExport = () => {
-    const json = ConfigService.exportConfig(localConfig);
+    const json = JSON.stringify(localConfig, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -64,7 +76,7 @@ export default function AdminPanel({ config, updateConfig, onClose }: AdminPanel
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
-          const imported = ConfigService.importConfig(event.target?.result as string);
+          const imported = JSON.parse(event.target?.result as string);
           setLocalConfig(imported);
           alert('Konfiguracja zaimportowana!');
         } catch (error) {
@@ -168,6 +180,29 @@ export default function AdminPanel({ config, updateConfig, onClose }: AdminPanel
           </div>
           
           <div className="space-y-6">
+            {/* Edytor regulaminu */}
+            {onEnableRegulaminEdit && (
+              <div className="bg-gray-800/50 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                  <FileEdit className="w-5 h-5 mr-2 text-[#26a69a]" />
+                  Edytor treści
+                </h3>
+                <p className="text-gray-400 text-sm mb-4">
+                  Włącz tryb edycji regulaminu. Musisz być na stronie /regulamin aby użyć tej funkcji.
+                </p>
+                <button
+                  onClick={() => {
+                    onEnableRegulaminEdit();
+                    alert('Tryb edycji regulaminu włączony. Przejdź na stronę /regulamin aby edytować.');
+                  }}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 text-white font-semibold rounded-lg transition-all flex items-center justify-center"
+                >
+                  <FileEdit className="w-5 h-5 mr-2" />
+                  Włącz edytor regulaminu
+                </button>
+              </div>
+            )}
+            
             {/* Progress Bar */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Progress Bar</h3>
@@ -411,12 +446,13 @@ export default function AdminPanel({ config, updateConfig, onClose }: AdminPanel
             </div>
             
             {/* Akcje */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={handleSave}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-semibold rounded-lg transition-all"
+                disabled={saving}
+                className="flex-1 min-w-[150px] px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Zapisz zmiany
+                {saving ? 'Zapisywanie...' : 'Zapisz zmiany'}
               </button>
               
               <button
