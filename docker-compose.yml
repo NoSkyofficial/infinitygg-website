@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: infinitygg_db
+    environment:
+      POSTGRES_DB: infinitygg
+      POSTGRES_USER: infinitygg_user
+      POSTGRES_PASSWORD: bezpieczne_haslo
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

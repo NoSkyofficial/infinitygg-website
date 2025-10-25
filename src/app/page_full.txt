@@ -1,0 +1,2 @@
+[Full page.tsx content from document index 13 - to be copied during final packaging]
+This file contains the complete main page with all animations and components.
