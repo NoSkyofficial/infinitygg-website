@@ -29,11 +29,11 @@ export async function POST(
     
     const newVersion = (maxVersion?.version || 0) + 1;
     
-    // Create new version with restored content
+    // Create new version with restored content - używamy 'notes'
     const restored = await prisma.regulationVersion.create({
       data: {
         content: versionToRestore.content,
-        comment: `Przywrócono wersję ${versionToRestore.version}`,
+        notes: `Przywrócono wersję ${versionToRestore.version}`, // ✅ ZMIANA: notes zamiast comment
         version: newVersion,
         updatedBy: admin.userId,
       },

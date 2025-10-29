@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 const regulationSchema = z.object({
   content: z.string().min(1, 'Content cannot be empty'),
-  comment: z.string().optional(),
+  comment: z.string().optional(), // Frontend wysyła 'comment'
 });
 
 export async function POST(request: NextRequest) {
@@ -31,11 +31,11 @@ export async function POST(request: NextRequest) {
     
     const newVersion = (maxVersion?.version || 0) + 1;
     
-    // Create new version
+    // Create new version - używamy 'notes' zamiast 'comment'
     const regulation = await prisma.regulationVersion.create({
       data: {
         content,
-        comment: comment || null,
+        notes: comment || null, // ✅ ZMIANA: notes zamiast comment
         version: newVersion,
         updatedBy: admin.userId,
       },
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       'RegulationVersion',
       {
         version: newVersion,
-        comment,
+        comment: comment, // W audit logu pozostawiamy 'comment' dla czytelności
       },
       request.headers.get('x-forwarded-for') || undefined,
       request.headers.get('user-agent') || undefined

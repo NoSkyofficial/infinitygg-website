@@ -1,3 +1,4 @@
+// src/app/api/regulations/versions/route.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/permissions';
@@ -20,7 +21,13 @@ export async function GET() {
       },
     });
     
-    return NextResponse.json({ versions });
+    // Mapujemy notes na comment dla kompatybilności z frontendem
+    const mappedVersions = versions.map(v => ({
+      ...v,
+      comment: v.notes, // ✅ Zwracamy notes jako comment
+    }));
+    
+    return NextResponse.json({ versions: mappedVersions });
   } catch (error) {
     console.error('Error fetching versions:', error);
     return NextResponse.json(
