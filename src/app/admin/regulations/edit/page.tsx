@@ -27,37 +27,15 @@ export default function EditRegulationsPage() {
       const response = await fetch("/api/regulations/current");
       if (response.ok) {
         const data = await response.json();
-        setContent(data.content || getTemplateContent());
+        if (data.content) {
+          setContent(data.content);
+        }
       }
     } catch (error) {
       console.error("Failed to load regulation:", error);
-      setContent(getTemplateContent());
     } finally {
       setLoading(false);
     }
-  };
-
-  const getTemplateContent = () => {
-    return `<h1>Regulamin Serwera InfinityGG</h1>
-
-<h2>1. Postanowienia ogólne</h2>
-<p>Niniejszy regulamin określa zasady korzystania z serwera GTA V RolePlay prowadzonego przez InfinityGG.</p>
-
-<h3>1.1 Definicje</h3>
-<p>Serwer - platforma multiplayer GTA V RolePlay zarządzana przez InfinityGG.</p>
-<p>Użytkownik/Gracz - osoba korzystająca z serwera InfinityGG.</p>
-
-<h3>1.2 Wymagania</h3>
-<p>Gracz musi posiadać oryginalną kopię gry Grand Theft Auto V oraz zainstalowany FiveM.</p>
-
-<h2>2. Zasady RolePlay</h2>
-<p>Wszelkie działania na serwerze muszą być wykonywane zgodnie z zasadami RolePlay.</p>
-
-<h3>2.1 Podstawy RolePlay</h3>
-<p>Gracz zobowiązany jest do odgrywania swojej postaci w sposób realistyczny i zgodny z logiką świata przedstawionego.</p>
-
-<h2>3. Zakazy i ograniczenia</h2>
-<p>Na serwerze obowiązują surowe zasady dotyczące niedozwolonych zachowań.</p>`;
   };
 
   const handleSave = async () => {
@@ -73,7 +51,7 @@ export default function EditRegulationsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content,
-          notes: comment.trim() || "Aktualizacja regulaminu",
+          comment: comment.trim() || "Aktualizacja regulaminu",
         }),
       });
 
@@ -134,7 +112,6 @@ export default function EditRegulationsPage() {
         />
 
         <div className="max-w-6xl mx-auto">
-          {/* Help Section */}
           {showHelp && (
             <div className="mb-6 bg-blue-500/10 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-6 relative">
               <button
@@ -156,23 +133,21 @@ export default function EditRegulationsPage() {
                     <div className="bg-blue-500/10 rounded-lg p-3">
                       <p className="font-semibold mb-1">📌 Główne sekcje (Nagłówek 1 lub 2):</p>
                       <p className="text-blue-300">
-                        Używaj <code className="bg-blue-500/20 px-2 py-0.5 rounded">H1</code> lub{" "}
-                        <code className="bg-blue-500/20 px-2 py-0.5 rounded">H2</code> dla głównych
+                        Używaj przycisków H1 lub H2 w pasku narzędzi dla głównych
                         rozdziałów, np. "1. Postanowienia ogólne"
                       </p>
                     </div>
                     <div className="bg-blue-500/10 rounded-lg p-3">
                       <p className="font-semibold mb-1">📋 Podsekcje (Nagłówek 3):</p>
                       <p className="text-blue-300">
-                        Używaj <code className="bg-blue-500/20 px-2 py-0.5 rounded">H3</code> dla
-                        podrozdziałów, np. "1.1 Definicje"
+                        Używaj przycisku H3 dla podrozdziałów, np. "1.1 Definicje"
                       </p>
                     </div>
                     <div className="bg-blue-500/10 rounded-lg p-3">
                       <p className="font-semibold mb-1">📝 Treść:</p>
                       <p className="text-blue-300">
-                        Zwykły tekst, listy punktowane, pogrubienia - wszystko będzie wyglądać
-                        profesjonalnie na stronie publicznej
+                        Zwykły tekst, listy punktowane, pogrubienia - formatuj używając
+                        przycisków w pasku narzędzi
                       </p>
                     </div>
                   </div>
@@ -187,7 +162,6 @@ export default function EditRegulationsPage() {
             </div>
           )}
 
-          {/* Comment Input */}
           <div className="mb-6 bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl p-6">
             <label className="block text-white font-medium mb-2">
               Komentarz do wersji (opcjonalnie)
@@ -204,7 +178,6 @@ export default function EditRegulationsPage() {
             </p>
           </div>
 
-          {/* Editor / Preview */}
           {preview ? (
             <div className="bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl p-8">
               <div className="mb-4 flex items-center justify-between">
@@ -214,7 +187,7 @@ export default function EditRegulationsPage() {
                 </span>
               </div>
               <div
-                className="prose prose-invert max-w-none prose-headings:text-[#26a69a] prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h2:border-b prose-h2:border-[#26a69a]/20 prose-h2:pb-2 prose-h2:mb-4"
+                className="prose prose-invert max-w-none prose-headings:text-[#26a69a] prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-h2:border-b prose-h2:border-[#26a69a]/20 prose-h2:pb-2 prose-h2:mb-4 prose-p:text-gray-300 prose-strong:text-white prose-ul:text-gray-300 prose-ol:text-gray-300 prose-li:text-gray-300"
                 dangerouslySetInnerHTML={{ __html: content }}
               />
             </div>
@@ -223,7 +196,7 @@ export default function EditRegulationsPage() {
               <div className="mb-4">
                 <h3 className="text-white font-semibold text-lg mb-2">Edytor regulaminu</h3>
                 <p className="text-gray-400 text-sm">
-                  Używaj przycisków powyżej edytora do formatowania tekstu
+                  Używaj przycisków w pasku narzędzi do formatowania tekstu
                 </p>
               </div>
               <RichTextEditor
@@ -234,7 +207,6 @@ export default function EditRegulationsPage() {
             </div>
           )}
 
-          {/* Save Button */}
           <div className="mt-6 flex justify-between items-center">
             <button
               onClick={() => setShowHelp(true)}
@@ -254,7 +226,6 @@ export default function EditRegulationsPage() {
             </button>
           </div>
 
-          {/* Quick Preview Info */}
           <div className="mt-6 bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-4">
             <p className="text-gray-400 text-sm text-center">
               💡 Podpowiedź: Użyj przycisku "Podgląd" aby zobaczyć jak regulamin będzie wyglądał

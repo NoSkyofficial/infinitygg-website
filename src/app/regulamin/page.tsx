@@ -20,7 +20,6 @@ interface RegulationData {
   comment?: string;
 }
 
-// Funkcja parsująca HTML na strukturę sekcji
 function parseHtmlToSections(html: string): LegalSection[] {
   if (!html || html.trim() === '') {
     return [
@@ -35,8 +34,6 @@ function parseHtmlToSections(html: string): LegalSection[] {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
   const sections: LegalSection[] = [];
-
-  // Znajdujemy wszystkie główne nagłówki (h1, h2)
   const mainHeadings = doc.querySelectorAll('h1, h2');
   
   mainHeadings.forEach((heading, index) => {
@@ -47,29 +44,29 @@ function parseHtmlToSections(html: string): LegalSection[] {
       subsections: [],
     };
 
-    // Zbieramy zawartość między tym a następnym nagłówkiem
     let currentElement = heading.nextElementSibling;
     let contentHtml = '';
     const subsections: LegalSection[] = [];
     let subsectionIndex = 0;
 
     while (currentElement && !['H1', 'H2'].includes(currentElement.tagName)) {
-      // Jeśli to h3, tworzymy podsekcję
       if (currentElement.tagName === 'H3') {
-        // Zapisz poprzednią zawartość jako główną treść sekcji
         if (contentHtml && subsections.length === 0) {
-          section.content = <div dangerouslySetInnerHTML={{ __html: contentHtml }} />;
+          section.content = (
+            <div 
+              className="prose prose-invert max-w-none prose-headings:text-[#26a69a] prose-p:text-gray-300 prose-strong:text-white prose-ul:text-gray-300 prose-ol:text-gray-300 prose-li:text-gray-300"
+              dangerouslySetInnerHTML={{ __html: contentHtml }} 
+            />
+          );
           contentHtml = '';
         }
 
-        // Utwórz nową podsekcję
         const subsection: LegalSection = {
           id: `section-${index + 1}-${subsectionIndex + 1}`,
           title: currentElement.textContent || `Podsekcja ${subsectionIndex + 1}`,
           content: '',
         };
 
-        // Zbierz zawartość podsekcji
         let subsectionContent = '';
         currentElement = currentElement.nextElementSibling;
 
@@ -78,7 +75,12 @@ function parseHtmlToSections(html: string): LegalSection[] {
           currentElement = currentElement.nextElementSibling;
         }
 
-        subsection.content = <div dangerouslySetInnerHTML={{ __html: subsectionContent }} />;
+        subsection.content = (
+          <div 
+            className="prose prose-invert max-w-none prose-headings:text-[#26a69a] prose-p:text-gray-300 prose-strong:text-white prose-ul:text-gray-300 prose-ol:text-gray-300 prose-li:text-gray-300"
+            dangerouslySetInnerHTML={{ __html: subsectionContent }} 
+          />
+        );
         subsections.push(subsection);
         subsectionIndex++;
         continue;
@@ -88,18 +90,25 @@ function parseHtmlToSections(html: string): LegalSection[] {
       currentElement = currentElement.nextElementSibling;
     }
 
-    // Jeśli nie ma podsekcji, cała zawartość idzie do głównej treści
     if (subsections.length === 0 && contentHtml) {
-      section.content = <div dangerouslySetInnerHTML={{ __html: contentHtml }} />;
+      section.content = (
+        <div 
+          className="prose prose-invert max-w-none prose-headings:text-[#26a69a] prose-p:text-gray-300 prose-strong:text-white prose-ul:text-gray-300 prose-ol:text-gray-300 prose-li:text-gray-300"
+          dangerouslySetInnerHTML={{ __html: contentHtml }} 
+        />
+      );
     } else if (subsections.length > 0) {
       section.subsections = subsections;
-      // Jeśli jest jeszcze jakaś zawartość po podsekcjach
       if (contentHtml) {
-        section.content = <div dangerouslySetInnerHTML={{ __html: contentHtml }} />;
+        section.content = (
+          <div 
+            className="prose prose-invert max-w-none prose-headings:text-[#26a69a] prose-p:text-gray-300 prose-strong:text-white prose-ul:text-gray-300 prose-ol:text-gray-300 prose-li:text-gray-300"
+            dangerouslySetInnerHTML={{ __html: contentHtml }} 
+          />
+        );
       }
     }
 
-    // Jeśli sekcja nie ma ani contentu ani podsekcji, dodaj pustą zawartość
     if (!section.content && (!section.subsections || section.subsections.length === 0)) {
       section.content = '';
     }
@@ -107,13 +116,17 @@ function parseHtmlToSections(html: string): LegalSection[] {
     sections.push(section);
   });
 
-  // Jeśli nie znaleziono żadnych nagłówków, pokaż cały HTML jako jedną sekcję
   if (sections.length === 0) {
     return [
       {
         id: 'main',
         title: 'Regulamin',
-        content: <div dangerouslySetInnerHTML={{ __html: html }} />,
+        content: (
+          <div 
+            className="prose prose-invert max-w-none prose-headings:text-[#26a69a] prose-p:text-gray-300 prose-strong:text-white prose-ul:text-gray-300 prose-ol:text-gray-300 prose-li:text-gray-300"
+            dangerouslySetInnerHTML={{ __html: html }} 
+          />
+        ),
       },
     ];
   }

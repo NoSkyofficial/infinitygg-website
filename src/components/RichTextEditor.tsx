@@ -1,4 +1,3 @@
-// src/components/RichTextEditor.tsx
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
@@ -45,7 +44,6 @@ export default function RichTextEditor({
 }: RichTextEditorProps) {
   const [isMounted, setIsMounted] = useState(false);
 
-  // Zapewniamy, że komponent działa tylko po stronie klienta
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -68,16 +66,21 @@ export default function RichTextEditor({
       Color,
       Highlight.configure({ multicolor: true }),
     ],
-    content: isMounted ? content : "", // pusty string zapobiega inicjalizacji SSR
+    content: isMounted ? content : "",
     immediatelyRender: false,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        class:
-          "prose prose-invert max-w-none focus:outline-none min-h-[400px] p-4",
+        class: "prose prose-invert max-w-none focus:outline-none min-h-[400px] p-6 prose-headings:text-[#26a69a] prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-gray-300 prose-strong:text-white prose-ul:text-gray-300 prose-ol:text-gray-300 prose-li:text-gray-300 prose-a:text-[#26a69a] prose-blockquote:border-[#26a69a]",
       },
     },
   });
+
+  useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
 
   const addLink = useCallback(() => {
     const url = window.prompt("Wprowadź URL:");
@@ -93,29 +96,27 @@ export default function RichTextEditor({
     }
   }, [editor]);
 
-  // Nie renderujemy zawartości, dopóki hook się nie zainicjalizuje
   if (!editor || !isMounted) return null;
 
   return (
     <div className="border border-[#26a69a]/20 rounded-xl overflow-hidden bg-gray-900">
-      {/* Toolbar */}
       <div className="border-b border-[#26a69a]/20 bg-gray-800/50 p-2 flex flex-wrap gap-1">
         <ToolbarButton
           active={editor.isActive("bold")}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          title="Pogrubienie"
+          title="Pogrubienie (Ctrl+B)"
           Icon={Bold}
         />
         <ToolbarButton
           active={editor.isActive("italic")}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          title="Kursywa"
+          title="Kursywa (Ctrl+I)"
           Icon={Italic}
         />
         <ToolbarButton
           active={editor.isActive("underline")}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          title="Podkreślenie"
+          title="Podkreślenie (Ctrl+U)"
           Icon={UnderlineIcon}
         />
         <ToolbarButton
@@ -131,20 +132,29 @@ export default function RichTextEditor({
           Icon={Code}
         />
 
-        {/* Headings */}
-        {[1, 2, 3].map((level) => (
-          <ToolbarButton
-            key={level}
-            active={editor.isActive("heading", { level })}
-            onClick={() => editor.chain().focus().toggleHeading({ level }).run()}
-            title={`Nagłówek ${level}`}
-            Icon={
-              level === 1 ? Heading1 : level === 2 ? Heading2 : Heading3
-            }
-          />
-        ))}
+        <div className="w-px h-8 bg-[#26a69a]/20 mx-1" />
 
-        {/* Lists and alignment */}
+        <ToolbarButton
+          active={editor.isActive("heading", { level: 1 })}
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          title="Nagłówek 1"
+          Icon={Heading1}
+        />
+        <ToolbarButton
+          active={editor.isActive("heading", { level: 2 })}
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          title="Nagłówek 2"
+          Icon={Heading2}
+        />
+        <ToolbarButton
+          active={editor.isActive("heading", { level: 3 })}
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          title="Nagłówek 3"
+          Icon={Heading3}
+        />
+
+        <div className="w-px h-8 bg-[#26a69a]/20 mx-1" />
+
         <ToolbarButton
           active={editor.isActive("bulletList")}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -163,6 +173,9 @@ export default function RichTextEditor({
           title="Cytat"
           Icon={Quote}
         />
+
+        <div className="w-px h-8 bg-[#26a69a]/20 mx-1" />
+
         <ToolbarButton
           active={editor.isActive({ textAlign: "left" })}
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
@@ -182,7 +195,8 @@ export default function RichTextEditor({
           Icon={AlignRight}
         />
 
-        {/* Insert */}
+        <div className="w-px h-8 bg-[#26a69a]/20 mx-1" />
+
         <ToolbarButton
           active={editor.isActive("link")}
           onClick={addLink}
@@ -196,22 +210,24 @@ export default function RichTextEditor({
           Icon={ImageIcon}
         />
 
-        {/* Undo/Redo */}
+        <div className="w-px h-8 bg-[#26a69a]/20 mx-1" />
+
         <ToolbarButton
           active={false}
           onClick={() => editor.chain().focus().undo().run()}
-          title="Cofnij"
+          disabled={!editor.can().undo()}
+          title="Cofnij (Ctrl+Z)"
           Icon={Undo}
         />
         <ToolbarButton
           active={false}
           onClick={() => editor.chain().focus().redo().run()}
-          title="Ponów"
+          disabled={!editor.can().redo()}
+          title="Ponów (Ctrl+Y)"
           Icon={Redo}
         />
       </div>
 
-      {/* Editor Content */}
       <EditorContent editor={editor} className="bg-gray-900/50" />
     </div>
   );
@@ -222,19 +238,22 @@ function ToolbarButton({
   onClick,
   title,
   Icon,
+  disabled = false,
 }: {
   active: boolean;
   onClick: () => void;
   title: string;
   Icon: React.ElementType;
+  disabled?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded transition-colors ${
+      disabled={disabled}
+      className={`p-2 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
         active
           ? "bg-[#26a69a] text-white"
-          : "text-gray-400 hover:bg-gray-700"
+          : "text-gray-400 hover:bg-gray-700 hover:text-white"
       }`}
       title={title}
     >

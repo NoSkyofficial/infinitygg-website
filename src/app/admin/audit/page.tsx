@@ -37,6 +37,8 @@ const ACTION_LABELS: Record<string, string> = {
   QUESTION_UPDATED: "Zaktualizowano pytanie",
   QUESTION_DELETED: "Usunięto pytanie",
   CONTENT_UPDATED: "Zaktualizowano treść strony",
+  REGULATION_UPDATED: "Zaktualizowano regulamin",
+  REGULATION_RESTORED: "Przywrócono wersję regulaminu",
 };
 
 const ACTION_COLORS: Record<string, string> = {
@@ -48,9 +50,10 @@ const ACTION_COLORS: Record<string, string> = {
   QUESTION_UPDATED: "yellow",
   QUESTION_DELETED: "red",
   CONTENT_UPDATED: "blue",
+  REGULATION_UPDATED: "blue",
+  REGULATION_RESTORED: "yellow",
 };
 
-// Component do ładnego formatowania JSON
 function JsonViewer({ data }: { data: any }) {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
@@ -195,7 +198,6 @@ export default function AdminAuditPage() {
   const getActionLabel = (action: string) => ACTION_LABELS[action] || action;
   const getActionColor = (action: string) => ACTION_COLORS[action] || "gray";
 
-  // Filtrowanie po wyszukiwaniu
   const filteredUsers = users.filter((user) =>
     searchQuery
       ? user.user.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -213,18 +215,16 @@ export default function AdminAuditPage() {
   return (
     <PermissionGuard permission="view_audit_logs">
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
-        {/* Header */}
         <AdminHeader
           icon={Activity}
           title="Logi Audytu"
           description="Historia wszystkich działań w systemie"
         />
 
-        {/* Filters */}
         <div className="mb-6 flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-gray-400 flex-shrink-0" />
-            {["all", "whitelist", "user", "question", "content", "system"].map((f) => (
+            {["all", "whitelist", "user", "question", "content", "regulation", "system"].map((f) => (
               <button
                 key={f}
                 onClick={() => {
@@ -242,7 +242,6 @@ export default function AdminAuditPage() {
             ))}
           </div>
 
-          {/* User Filter with Search */}
           <div className="flex items-center gap-2 flex-1 max-w-md">
             <User className="w-5 h-5 text-gray-400" />
             <div className="relative flex-1">
@@ -275,7 +274,6 @@ export default function AdminAuditPage() {
           </div>
         </div>
 
-        {/* Logs Container */}
         <div className="bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl overflow-hidden">
           {loading ? (
             <div className="p-12 flex justify-center">
@@ -356,7 +354,6 @@ export default function AdminAuditPage() {
           )}
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="mt-6 flex items-center justify-between">
             <p className="text-gray-400 text-sm">
