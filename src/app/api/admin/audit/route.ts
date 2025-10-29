@@ -1,21 +1,58 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/permissions';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     await requirePermission('view_audit_logs');
+    
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const logs = await prisma.auditLog.findMany({
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        user: { select: { name: true, image: true } },
-      },
-    });
-    return NextResponse.json({ logs });
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '20');
+    const filter = searchParams.get('filter');
+    const userId = searchParams.get('userId');
+    
+    const skip = (page - 1) * limit;
+    
+    const where: any = {};
+    
+    if (filter && filter !== 'all') {
+      where.action = {
+        contains: filter.toUpperCase(),
+      };
+    }
+    
+    if (userId && userId !== 'all') {
+      where.userId = userId;
+    }
+    
+    const [logs, total] = await Promise.all([
+      prisma.auditLog.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.auditLog.count({ where }),
+    ]);
+    
+    return NextResponse.json({ logs, total, page, limit });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch logs' }, { status: 500 });
+    console.error('Error fetching audit logs:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch audit logs' },
+      { status: 500 }
+    );
   }
 }

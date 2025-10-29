@@ -150,17 +150,24 @@ enum WhitelistStatus {
 }
 
 model WhitelistQuestion {
-  id       String  @id @default(cuid())
-  question String  @db.Text
-  order    Int
-  active   Boolean @default(true)
-  required Boolean @default(true)
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  question    String
+  questionType QuestionType @default(TEXT)
+  minLength   Int?
+  maxLength   Int?
+  required    Boolean  @default(true)
+  active      Boolean  @default(true)
+  order       Int
+  options     String[] // dla type SELECT
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
-  @@map("whitelist_questions")
-  @@index([order])
+enum QuestionType {
+  TEXT      // Krótki tekst
+  TEXTAREA  // Długi tekst
+  NUMBER    // Tylko liczby
+  SELECT    // Wybór z listy
 }
 
 // ==================== CONTENT MANAGEMENT ====================

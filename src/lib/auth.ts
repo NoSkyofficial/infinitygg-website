@@ -18,64 +18,96 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
-      // Just allow sign in - AdminUser will be created in session callback
-      return true;
-    },
-    async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
-        
-        // Get Discord ID from account
-        const account = await prisma.account.findFirst({
-          where: {
-            userId: user.id,
-            provider: "discord",
-          },
-        });
+    async jwt({ token, user, account, trigger }) {
+      // Initial sign in
+      if (user) {
+        token.id = user.id;
+      }
+      
+      // ALWAYS fetch fresh admin data (not just on sign in)
+      if (token.id) {
+        try {
+          const adminProfile = await prisma.adminUser.findUnique({
+            where: { userId: token.id as string },
+          });
 
-        if (account) {
-          // Create or update admin user record
-          try {
-            let adminProfile = await prisma.adminUser.findUnique({
-              where: { userId: user.id },
-            });
-
-            if (!adminProfile) {
-              // Create new AdminUser if doesn't exist
-              adminProfile = await prisma.adminUser.create({
-                data: {
-                  userId: user.id,
-                  discordId: account.providerAccountId,
-                  discordTag: user.name || "Unknown",
-                  role: "InfinityGG_Team",
-                  permissions: [],
-                  lastLogin: new Date(),
-                },
-              });
-            } else {
-              // Update last login
-              await prisma.adminUser.update({
-                where: { id: adminProfile.id },
-                data: {
-                  lastLogin: new Date(),
-                  discordTag: user.name || adminProfile.discordTag,
-                },
-              });
-            }
-
-            // Attach to session
-            (session.user as any).admin = {
+          if (adminProfile) {
+            token.admin = {
+              id: adminProfile.id,
               role: adminProfile.role,
-              permissions: adminProfile.permissions,
+              permissions: adminProfile.permissions || [],
               active: adminProfile.active,
             };
-          } catch (error) {
-            console.error("Error with admin profile:", error);
+            
+            console.log('[Auth JWT] Admin loaded:', {
+              userId: token.id,
+              role: adminProfile.role,
+              permissions: adminProfile.permissions,
+            });
+          } else {
+            console.log('[Auth JWT] No admin profile found for userId:', token.id);
+            token.admin = null;
           }
+        } catch (error) {
+          console.error("[Auth JWT] Error fetching admin:", error);
+          token.admin = null;
         }
       }
+      
+      return token;
+    },
+    
+    async session({ session, token }) {
+      if (session.user && token) {
+        session.user.id = token.id as string;
+        (session.user as any).admin = token.admin;
+        
+        console.log('[Auth Session] Session created:', {
+          userId: session.user.id,
+          admin: token.admin,
+        });
+      }
       return session;
+    },
+  },
+  events: {
+    async linkAccount({ user, account }) {
+      console.log("[Event] linkAccount called - user:", user.id, "provider:", account.provider);
+      
+      if (account.provider === "discord") {
+        try {
+          const existingAdmin = await prisma.adminUser.findUnique({
+            where: { userId: user.id },
+          });
+
+          if (existingAdmin) {
+            console.log("[Event] AdminUser exists, updating lastLogin");
+            await prisma.adminUser.update({
+              where: { id: existingAdmin.id },
+              data: {
+                lastLogin: new Date(),
+                discordTag: user.name || existingAdmin.discordTag,
+              },
+            });
+            return;
+          }
+
+          console.log("[Event] Creating new AdminUser");
+          const newAdmin = await prisma.adminUser.create({
+            data: {
+              userId: user.id,
+              discordId: account.providerAccountId,
+              discordTag: user.name || "Unknown",
+              role: "InfinityGG_Team",
+              permissions: [], // Będzie miał permissions z roli
+              lastLogin: new Date(),
+            },
+          });
+          console.log("[Event] AdminUser created:", newAdmin.id);
+        } catch (error) {
+          console.error("[Event] Error in linkAccount:", error);
+        }
+      }
     },
   },
   pages: {
@@ -83,13 +115,12 @@ export const authConfig = {
     error: "/auth/error",
   },
   session: {
-    strategy: "database",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
   },
   debug: process.env.NODE_ENV === "development",
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
 
-// Helper to get session in server components
 export { auth as getServerSession };
