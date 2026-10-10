@@ -95,6 +95,7 @@ Lista zgodna z `.env.example`:
 | `DATABASE_URL` | `prisma/schema.prisma` | Adres połączenia z PostgreSQL |
 | `NEXTAUTH_SECRET` | Auth.js | Sekret do podpisywania sesji |
 | `NEXTAUTH_URL` | Auth.js | Publiczny adres aplikacji |
+| `AUTH_TRUST_HOST` | Auth.js | Ustaw `true` przy `next start` poza Vercel (zaufanie nagłówkowi Host) |
 | `DISCORD_CLIENT_ID` | `src/lib/auth.ts` | ID aplikacji Discord (OAuth2) |
 | `DISCORD_CLIENT_SECRET` | `src/lib/auth.ts` | Sekret aplikacji Discord (OAuth2) |
 | `DISCORD_BOT_TOKEN` | `src/lib/discord.ts` | Token bota do nadawania ról |
