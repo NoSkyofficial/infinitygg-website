@@ -145,7 +145,7 @@ export function withAuth(handler: Function) {
   return async (req: Request, ...args: any[]) => {
     try {
       await requireAuth();
-      return handler(req, ...args);
+      return await handler(req, ...args);
     } catch (error) {
       return Response.json(
         { error: 'Unauthorized' },
@@ -159,7 +159,7 @@ export function withAdmin(handler: Function) {
   return async (req: Request, ...args: any[]) => {
     try {
       const { admin } = await requireAdmin();
-      return handler(req, { admin }, ...args);
+      return await handler(req, { admin }, ...args);
     } catch (error) {
       return Response.json(
         { error: 'Admin access required' },
@@ -173,7 +173,7 @@ export function withPermission(permission: Permission, handler: Function) {
   return async (req: Request, ...args: any[]) => {
     try {
       const admin = await requirePermission(permission);
-      return handler(req, { admin }, ...args);
+      return await handler(req, { admin }, ...args);
     } catch (error) {
       return Response.json(
         { error: `Permission denied: ${permission}` },
