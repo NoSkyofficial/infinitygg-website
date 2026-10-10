@@ -7,9 +7,8 @@
 4. [Baza danych](#baza-danych)
 5. [Uruchomienie](#uruchomienie)
 6. [Discord OAuth Setup](#discord-oauth-setup)
-7. [Zmienne środowiskowe](#zmienne-środowiskowe)
-8. [Role i uprawnienia](#role-i-uprawnienia)
-9. [Troubleshooting](#troubleshooting)
+7. [Role i uprawnienia](#role-i-uprawnienia)
+8. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -29,15 +28,10 @@
 
 ## 📦 Instalacja
 
-### 1. Rozpakuj projekt
+### 1. Pobierz projekt
 ```bash
-# Jeśli pobrano jako .zip
-unzip infinitygg-update.zip
-cd infinitygg-update
-
-# Lub sklonuj z repo
-git clone <repository-url>
-cd infinitygg
+git clone https://github.com/NoSkyofficial/infinitygg-website.git
+cd infinitygg-website
 ```
 
 ### 2. Zainstaluj zależności
@@ -60,49 +54,11 @@ cp .env.example .env
 
 ### 2. Skonfiguruj zmienne środowiskowe
 
-Otwórz plik `.env` i uzupełnij:
-
-```env
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/infinitygg"
-
-# Next Auth
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="wygeneruj-losowy-string-min-32-znaki"
-
-# Discord OAuth
-DISCORD_CLIENT_ID="twoje_discord_client_id"
-DISCORD_CLIENT_SECRET="twoje_discord_client_secret"
-DISCORD_BOT_TOKEN="twoje_discord_bot_token"
-
-# Discord Webhooks
-DISCORD_WEBHOOK_WHITELIST_APPROVED="https://discord.com/api/webhooks/..."
-DISCORD_WEBHOOK_WHITELIST_REJECTED="https://discord.com/api/webhooks/..."
-
-# Discord Guild & Role IDs
-DISCORD_GUILD_ID="id_twojego_serwera_discord"
-DISCORD_WHITELIST_ROLE_ID="id_roli_whitelist"
-
-# Admin
-ADMIN_PASS_HASH="240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9"
-# To jest hash dla hasła "admin" - ZMIEŃ TO!
-
-# Server Status (opcjonalne)
-CFTOOLS_SERVER_ID="twoje_cftools_id"
-CFTOOLS_API_KEY="twoje_cftools_api_key"
-```
+Otwórz plik `.env` i uzupełnij wartości zmiennych z `.env.example` (opis zmiennych jest w README, sekcja „Zmienne środowiskowe”).
 
 ### Generowanie NEXTAUTH_SECRET
 ```bash
 openssl rand -base64 32
-```
-
-### Generowanie ADMIN_PASS_HASH
-```bash
-# W przeglądarce wykonaj:
-# echo -n "twoje_haslo" | sha256sum
-# Lub użyj Node.js:
-node -e "console.log(require('crypto').createHash('sha256').update('twoje_haslo').digest('hex'))"
 ```
 
 ---
@@ -134,25 +90,7 @@ GRANT ALL PRIVILEGES ON DATABASE infinitygg TO infinitygg_user;
 
 ### Opcja 2: Docker (zalecane)
 
-Utwórz `docker-compose.yml`:
-```yaml
-version: '3.8'
-services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: infinitygg_db
-    environment:
-      POSTGRES_DB: infinitygg
-      POSTGRES_USER: infinitygg_user
-      POSTGRES_PASSWORD: bezpieczne_haslo
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
-```
+Plik `docker-compose.yml` znajduje się w repozytorium.
 
 Uruchom:
 ```bash
@@ -258,8 +196,8 @@ System posiada następujące role:
 ### Role podstawowe
 - **root** - Pełen dostęp do wszystkich funkcji
 - **contentEditor** - Edycja treści (regulamin, FAQ, strony)
-- **InfinityGG-Team** - Dostęp do panelu admina, podstawowe funkcje
-- **Whitelist Checker** - Zarządzanie podaniami whitelist
+- **InfinityGG_Team** - Dostęp do panelu admina, podstawowe funkcje
+- **Whitelist_Checker** - Zarządzanie podaniami whitelist
 
 ### Uprawnienia szczegółowe
 - `edit_regulations` - Edycja regulaminu
@@ -275,10 +213,10 @@ Po zalogowaniu pierwszego użytkownika przez Discord, ręcznie nadaj mu rolę ro
 
 ```sql
 -- Znajdź ID użytkownika
-SELECT * FROM "AdminUser" WHERE "discordId" = 'TWOJE_DISCORD_ID';
+SELECT * FROM admin_users WHERE "discordId" = 'TWOJE_DISCORD_ID';
 
 -- Nadaj rolę root
-UPDATE "AdminUser" 
+UPDATE admin_users 
 SET role = 'root', 
     permissions = ARRAY['all']::text[]
 WHERE "discordId" = 'TWOJE_DISCORD_ID';
@@ -303,27 +241,7 @@ npx prisma migrate reset
 ```
 
 ### Seed danych (opcjonalnie)
-Utwórz plik `prisma/seed.ts`:
-```typescript
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-async function main() {
-  // Dodaj domyślne pytania whitelist
-  await prisma.whitelistQuestion.createMany({
-    data: [
-      { question: 'Jak długo grasz w GTA V RP?', order: 1, active: true },
-      { question: 'Opisz swoją postać i jej historię', order: 2, active: true },
-      // ...więcej pytań
-    ]
-  });
-}
-
-main()
-  .catch((e) => console.error(e))
-  .finally(() => prisma.$disconnect());
-```
+Plik `prisma/seed.ts` znajduje się w repozytorium i dodaje domyślne pytania whitelisty.
 
 Uruchom:
 ```bash
@@ -393,12 +311,11 @@ infinitygg-update/
 │   │   ├── api/           # API routes
 │   │   └── ...
 │   ├── components/        # Komponenty React
-│   ├── lib/
+│   └── lib/
 │   │   ├── auth.ts        # Konfiguracja Auth.js
 │   │   ├── prisma.ts      # Prisma Client
 │   │   ├── permissions.ts # System RBAC
 │   │   └── discord.ts     # Discord API utils
-│   └── types/             # TypeScript types
 ├── public/                # Pliki statyczne
 ├── .env                   # Zmienne środowiskowe
 ├── package.json
