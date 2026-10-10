@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowLeft, GitCompare } from "lucide-react";
 import PermissionGuard from "@/components/PermissionGuard";
@@ -18,7 +18,7 @@ interface RegulationVersion {
   };
 }
 
-export default function CompareRegulationsPage() {
+function CompareRegulationsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [version1, setVersion1] = useState<RegulationVersion | null>(null);
@@ -125,5 +125,13 @@ export default function CompareRegulationsPage() {
         />
       </div>
     </PermissionGuard>
+  );
+}
+
+export default function CompareRegulationsPage() {
+  return (
+    <Suspense>
+      <CompareRegulationsContent />
+    </Suspense>
   );
 }
