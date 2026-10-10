@@ -4,13 +4,22 @@ import { requirePermission } from '@/lib/permissions';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+  const versionId = Number(id);
+  if (!Number.isInteger(versionId)) {
+    return NextResponse.json(
+      { error: 'Invalid version id' },
+      { status: 400 }
+    );
+  }
+
   try {
     await requirePermission('edit_regulations');
     
     const version = await prisma.regulationVersion.findUnique({
-      where: { id: params.id },
+      where: { id: versionId },
       include: {
         user: {
           select: {

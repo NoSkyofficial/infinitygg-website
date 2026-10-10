@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Prisma } from '@prisma/client';
 import { requirePermission, logAudit } from '@/lib/permissions';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+  const versionId = Number(id);
+  if (!Number.isInteger(versionId)) {
+    return NextResponse.json(
+      { error: 'Invalid version id' },
+      { status: 400 }
+    );
+  }
+
   try {
     const admin = await requirePermission('edit_regulations');
     
     const versionToRestore = await prisma.regulationVersion.findUnique({
-      where: { id: params.id },
+      where: { id: versionId },
     });
     
     if (!versionToRestore) {
@@ -30,7 +40,7 @@ export async function POST(
     // Używamy pola 'notes'
     const restored = await prisma.regulationVersion.create({
       data: {
-        content: versionToRestore.content,
+        content: versionToRestore.content as Prisma.InputJsonValue,
         notes: `Przywrócono wersję ${versionToRestore.version}`, // ✅ ZMIANA: notes zamiast comment
         version: newVersion,
         updatedBy: admin.userId,
@@ -40,7 +50,7 @@ export async function POST(
     await logAudit(
       admin.userId,
       'REGULATION_RESTORED',
-      restored.id,
+      String(restored.id),
       'RegulationVersion',
       {
         restoredFrom: versionToRestore.version,
