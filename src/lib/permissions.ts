@@ -91,7 +91,7 @@ export async function getCurrentAdmin() {
 export async function requireAuth() {
   const session = await getServerSession();
   if (!session?.user?.id) {
-    throw new AuthError(401, 'Authentication required');
+    throw new AuthError(401, 'Wymagane zalogowanie');
   }
   return session as typeof session & { user: { id: string } };
 }
@@ -101,7 +101,7 @@ export async function requireAdmin() {
   const admin = await getCurrentAdmin();
   
   if (!admin || !admin.active) {
-    throw new AuthError(403, 'Admin access required');
+    throw new AuthError(403, 'Wymagany dostęp administratora');
   }
   
   return { session, admin };
@@ -117,7 +117,7 @@ export async function requirePermission(permission: Permission) {
   );
   
   if (!hasPermission) {
-    throw new AuthError(403, `Permission denied: ${permission}`);
+    throw new AuthError(403, `Brak uprawnienia: ${permission}`);
   }
   
   return admin;
@@ -170,7 +170,7 @@ export function withAuth(handler: Function) {
       return await handler(req, ...args);
     } catch (error) {
       return Response.json(
-        { error: 'Unauthorized' },
+        { error: 'Wymagane zalogowanie' },
         { status: 401 }
       );
     }
@@ -184,7 +184,7 @@ export function withAdmin(handler: Function) {
       return await handler(req, { admin }, ...args);
     } catch (error) {
       return Response.json(
-        { error: 'Admin access required' },
+        { error: 'Wymagany dostęp administratora' },
         { status: 403 }
       );
     }
@@ -198,7 +198,7 @@ export function withPermission(permission: Permission, handler: Function) {
       return await handler(req, { admin }, ...args);
     } catch (error) {
       return Response.json(
-        { error: `Permission denied: ${permission}` },
+        { error: `Brak uprawnienia: ${permission}` },
         { status: 403 }
       );
     }
