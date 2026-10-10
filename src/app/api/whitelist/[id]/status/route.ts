@@ -12,8 +12,9 @@ const statusSchema = z.object({
 // PATCH /api/whitelist/[id]/status - Update application status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await requirePermission('review_applications');
     const body = await request.json();
@@ -29,7 +30,7 @@ export async function PATCH(
     const { status, rejectionReason } = validation.data;
     
     const application = await prisma.whitelistApplication.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
     
     if (!application) {
@@ -40,7 +41,7 @@ export async function PATCH(
     }
     
     const updated = await prisma.whitelistApplication.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         status,
         reviewedBy: admin.id,

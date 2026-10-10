@@ -13,8 +13,9 @@ const questionSchema = z.object({
 // PATCH /api/admin/questions/[id] - Update question
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await requirePermission('manage_questions');
     const body = await request.json();
@@ -30,7 +31,7 @@ export async function PATCH(
     const data = validation.data;
     
     const currentQuestion = await prisma.whitelistQuestion.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
     
     if (!currentQuestion) {
@@ -41,7 +42,7 @@ export async function PATCH(
     }
     
     const updated = await prisma.whitelistQuestion.update({
-      where: { id: params.id },
+      where: { id: id },
       data,
     });
     
@@ -71,13 +72,14 @@ export async function PATCH(
 // DELETE /api/admin/questions/[id] - Delete question
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await requirePermission('manage_questions');
     
     const question = await prisma.whitelistQuestion.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
     
     if (!question) {
@@ -88,13 +90,13 @@ export async function DELETE(
     }
     
     await prisma.whitelistQuestion.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
     
     await logAudit(
       admin.userId,
       'QUESTION_DELETED',
-      params.id,
+      id,
       'WhitelistQuestion',
       {
         deletedQuestion: question.question,

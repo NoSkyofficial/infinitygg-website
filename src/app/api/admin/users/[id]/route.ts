@@ -12,8 +12,9 @@ const updateUserSchema = z.object({
 // PATCH /api/admin/users/[id] - Update user
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await requirePermission('manage_users');
     const body = await request.json();
@@ -29,7 +30,7 @@ export async function PATCH(
     const data = validation.data;
     
     const currentUser = await prisma.adminUser.findUnique({
-      where: { id: params.id },
+      where: { id: id },
     });
     
     if (!currentUser) {
@@ -40,7 +41,7 @@ export async function PATCH(
     }
     
     const updated = await prisma.adminUser.update({
-      where: { id: params.id },
+      where: { id: id },
       data,
       include: {
         user: {
@@ -83,13 +84,14 @@ export async function PATCH(
 // DELETE /api/admin/users/[id] - Delete user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const admin = await requirePermission('manage_users');
     
     const user = await prisma.adminUser.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: {
         user: {
           select: {
@@ -107,13 +109,13 @@ export async function DELETE(
     }
     
     await prisma.adminUser.delete({
-      where: { id: params.id },
+      where: { id: id },
     });
     
     await logAudit(
       admin.userId,
       'USER_DELETED',
-      params.id,
+      id,
       'AdminUser',
       {
         deletedUser: user.user.name,
