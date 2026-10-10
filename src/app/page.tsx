@@ -732,4 +732,4 @@ export default function InfinityGGWebsite() {
   );
 }
 
-export { ConfigService, type SiteConfig, type FAQ };
+export { ConfigService };
