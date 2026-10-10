@@ -553,46 +553,6 @@ const FAQAccordion: React.FC = () => {
   );
 };
 
-// Shop Section
-/* const ShopSection: React.FC = () => {
-  const { config } = useContext(ConfigContext);
-  
-  if (!config.showShopRedirect) return null;
-  
-  return (
-    <section id="sklep" className="py-20 px-4 relative">
-      <div className="max-w-3xl mx-auto text-center">
-        <div className="relative bg-gradient-to-br from-gray-900/80 to-gray-900/50 backdrop-blur-sm border border-[#26a69a]/30 rounded-3xl p-12 hover:border-[#26a69a]/50 transition-all group">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#26a69a]/0 to-[#26a69a]/0 group-hover:from-[#26a69a]/10 group-hover:to-transparent transition-all" />
-          
-          <div className="relative z-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#26a69a] to-[#00897b] rounded-2xl mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-[#26a69a]/30">
-              <ExternalLink className="w-8 h-8 text-white" />
-            </div>
-            
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Sklep <span className="text-[#26a69a]">InfinityGG</span>
-            </h2>
-            <p className="text-xl text-gray-300 mb-8">
-              Wesprzyj rozwój serwera i zdobądź ekskluzywne dodatki kosmetyczne.
-            </p>
-            
-            <a
-              href="https://infinitygg.tebex.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#26a69a] to-[#00897b] hover:from-[#00897b] hover:to-[#26a69a] text-white font-semibold rounded-xl transition-all shadow-lg shadow-[#26a69a]/30 hover:shadow-[#26a69a]/50 hover:scale-105 group"
-            >
-              Przejdź do sklepu
-              <ExternalLink className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}; */
-
 const Footer: React.FC = () => {
   const year = new Date().getFullYear();
   
@@ -678,7 +638,6 @@ export default function InfinityGGWebsite() {
         <Hero />
         <ValueCards />
         <FAQAccordion />
-        {/* <ShopSection /> */}
         <Footer />
         
        {/*  {showAdmin && <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />} */}

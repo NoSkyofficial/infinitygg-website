@@ -31,7 +31,6 @@ const navigation: NavItem[] = [
   { href: "/admin/whitelist/questions", label: "Pytania WL", icon: FileText, permission: "manage_questions" },
   { href: "/admin/regulations/history", label: "Regulamin", icon: FileText, permission: "edit_regulations" },
   { href: "/admin/audit", label: "Logi Audytu", icon: Activity, permission: "view_audit_logs" },
-  { href: "/admin/content", label: "Treść", icon: FileText, permission: "edit_content" },
   { href: "/admin/settings", label: "Ustawienia", icon: Settings, permission: "manage_system" },
 ];
 
