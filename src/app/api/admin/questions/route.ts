@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission, logAudit } from '@/lib/permissions';
+import { requirePermission, logAudit, authErrorResponse } from '@/lib/permissions';
 import { z } from 'zod';
 
 const questionSchema = z.object({
@@ -21,6 +21,8 @@ export async function GET() {
     
     return NextResponse.json({ questions });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error fetching questions:', error);
     return NextResponse.json(
       { error: 'Failed to fetch questions' },
@@ -64,6 +66,8 @@ export async function POST(request: NextRequest) {
       question,
     });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error creating question:', error);
     return NextResponse.json(
       { error: 'Failed to create question' },

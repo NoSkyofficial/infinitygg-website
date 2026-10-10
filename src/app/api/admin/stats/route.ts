@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAdmin } from '@/lib/permissions';
+import { requireAdmin, authErrorResponse } from '@/lib/permissions';
 
 export async function GET() {
   try {
@@ -58,6 +58,8 @@ export async function GET() {
       regulationVersions,
     });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error fetching stats:', error);
     return NextResponse.json(
       { error: 'Failed to fetch stats' },

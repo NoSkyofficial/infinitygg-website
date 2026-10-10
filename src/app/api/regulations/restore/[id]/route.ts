@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import type { Prisma } from '@prisma/client';
-import { requirePermission, logAudit } from '@/lib/permissions';
+import { requirePermission, logAudit, authErrorResponse } from '@/lib/permissions';
 
 export async function POST(
   request: NextRequest,
@@ -62,6 +62,8 @@ export async function POST(
     
     return NextResponse.json({ success: true, version: restored });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error restoring version:', error);
     return NextResponse.json(
       { error: 'Failed to restore version' },

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission, logAudit } from '@/lib/permissions';
+import { requirePermission, logAudit, authErrorResponse } from '@/lib/permissions';
 import { z } from 'zod';
 
 const questionSchema = z.object({
@@ -61,6 +61,8 @@ export async function PATCH(
     
     return NextResponse.json({ success: true, question: updated });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error updating question:', error);
     return NextResponse.json(
       { error: 'Failed to update question' },
@@ -108,6 +110,8 @@ export async function DELETE(
     
     return NextResponse.json({ success: true });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error deleting question:', error);
     return NextResponse.json(
       { error: 'Failed to delete question' },

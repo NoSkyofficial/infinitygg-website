@@ -2,6 +2,28 @@ import { AdminRole } from '@prisma/client';
 import { getServerSession } from './auth';
 import { prisma } from './prisma';
 
+/**
+ * Błąd autoryzacji z kodem HTTP. Trasy API mapują go na 401/403 zamiast 500.
+ */
+export class AuthError extends Error {
+  status: 401 | 403;
+  constructor(status: 401 | 403, message: string) {
+    super(message);
+    this.name = 'AuthError';
+    this.status = status;
+  }
+}
+
+/**
+ * Zwraca odpowiedź 401/403 dla AuthError, w pozostałych przypadkach null.
+ */
+export function authErrorResponse(error: unknown): Response | null {
+  if (error instanceof AuthError) {
+    return Response.json({ error: error.message }, { status: error.status });
+  }
+  return null;
+}
+
 export type Permission =
   | 'edit_regulations'
   | 'edit_content'
@@ -69,7 +91,7 @@ export async function getCurrentAdmin() {
 export async function requireAuth() {
   const session = await getServerSession();
   if (!session?.user?.id) {
-    throw new Error('Authentication required');
+    throw new AuthError(401, 'Authentication required');
   }
   return session as typeof session & { user: { id: string } };
 }
@@ -79,7 +101,7 @@ export async function requireAdmin() {
   const admin = await getCurrentAdmin();
   
   if (!admin || !admin.active) {
-    throw new Error('Admin access required');
+    throw new AuthError(403, 'Admin access required');
   }
   
   return { session, admin };
@@ -95,7 +117,7 @@ export async function requirePermission(permission: Permission) {
   );
   
   if (!hasPermission) {
-    throw new Error(`Permission denied: ${permission}`);
+    throw new AuthError(403, `Permission denied: ${permission}`);
   }
   
   return admin;

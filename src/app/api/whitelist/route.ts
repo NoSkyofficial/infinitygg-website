@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireAuth, logAudit } from '@/lib/permissions';
+import { requireAuth, logAudit, authErrorResponse } from '@/lib/permissions';
 import { z } from 'zod';
 
 const applicationSchema = z.object({
@@ -33,6 +33,8 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ applications });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error fetching applications:', error);
     return NextResponse.json(
       { error: 'Failed to fetch applications' },
@@ -109,6 +111,8 @@ export async function POST(request: NextRequest) {
       application 
     });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error submitting application:', error);
     return NextResponse.json(
       { error: 'Failed to submit application' },

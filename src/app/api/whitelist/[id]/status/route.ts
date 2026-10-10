@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission, logAudit } from '@/lib/permissions';
+import { requirePermission, logAudit, authErrorResponse } from '@/lib/permissions';
 import { discordClient } from '@/lib/discord';
 import { z } from 'zod';
 
@@ -83,6 +83,8 @@ export async function PATCH(
       application: updated,
     });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error updating application status:', error);
     return NextResponse.json(
       { error: 'Failed to update application status' },

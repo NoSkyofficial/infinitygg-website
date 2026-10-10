@@ -81,7 +81,7 @@ const LegalHeader: React.FC = () => {
 };
 
 const LegalFooter: React.FC = () => {
-  const year = new Date().getFullYear();
+  const year = 2025;
   
   return (
     <footer className="bg-gray-900/80 backdrop-blur-sm border-t border-[#26a69a]/20 py-12 px-4 mt-20">

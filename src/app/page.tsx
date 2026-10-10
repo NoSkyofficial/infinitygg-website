@@ -10,7 +10,6 @@ export interface SiteConfig {
   progressLabel: string;
   showStatus: boolean;
   showFAQ: boolean;
-  showShopRedirect: boolean;
   showBetaBadge: boolean;
   heroTitle: string;
   heroLead: string;
@@ -38,7 +37,6 @@ class ConfigService {
       progressLabel: 'Etap beta',
       showStatus: true,
       showFAQ: true,
-      showShopRedirect: true,
       showBetaBadge: true,
       heroTitle: 'Witaj na InfinityGG',
       heroLead: 'InfinityGG to serwer RP GTA V, gdzie liczy się historia Twojej postaci, stabilna rozgrywka i kultura RP.​ Dołącz i sprawdź, dokąd zaprowadzi Cię ta historia.',
@@ -239,12 +237,6 @@ const Header: React.FC<{ onAdminClick: () => void }> = ({ onAdminClick }) => {
               Whitelist
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#26a69a] group-hover:w-full transition-all duration-300" />
             </a>
-            {config.showShopRedirect && (
-              <a href="/sklep" className="text-gray-300 hover:text-[#26a69a] transition-colors relative group">
-                Sklep
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#26a69a] group-hover:w-full transition-all duration-300" />
-              </a>
-            )}
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
@@ -294,11 +286,6 @@ const Header: React.FC<{ onAdminClick: () => void }> = ({ onAdminClick }) => {
             <a href="/regulamin" className="block text-gray-300 hover:text-[#26a69a] transition-colors py-2">
               Regulamin
             </a>
-            {config.showShopRedirect && (
-              <a href="/sklep" className="block text-gray-300 hover:text-[#26a69a] transition-colors py-2">
-                Sklep
-              </a>
-            )}
             
             <div className="flex items-center space-x-3 pt-3 border-t border-[#26a69a]/20">
               {socialIcons.filter(s => s.enabled).map((social) => (
@@ -554,7 +541,7 @@ const FAQAccordion: React.FC = () => {
 };
 
 const Footer: React.FC = () => {
-  const year = new Date().getFullYear();
+  const year = 2025;
   
   return (
     <footer className="relative bg-gray-900/80 backdrop-blur-sm border-t border-[#26a69a]/20 py-12 px-4 mt-20">
@@ -575,12 +562,6 @@ const Footer: React.FC = () => {
               <a href="https://discord.gg/infinitygg" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
                 Discord
               </a>
-              {/* <a href="https://twitter.com/infinitygg" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
-                Twitter
-              </a>
-              <a href="https://youtube.com/@infinitygg" className="block text-gray-400 hover:text-[#26a69a] text-sm transition-colors">
-                YouTube
-              </a> */}
             </div>
           </div>
           
@@ -639,8 +620,6 @@ export default function InfinityGGWebsite() {
         <ValueCards />
         <FAQAccordion />
         <Footer />
-        
-       {/*  {showAdmin && <AdminPanel config={config} updateConfig={updateConfig} onClose={() => setShowAdmin(false)} />} */}
         
         <style jsx global>{`
           @keyframes gradient {

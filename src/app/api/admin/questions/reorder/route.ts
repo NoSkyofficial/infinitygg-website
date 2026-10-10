@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission, logAudit } from '@/lib/permissions';
+import { requirePermission, logAudit, authErrorResponse } from '@/lib/permissions';
 import { z } from 'zod';
 
 const reorderSchema = z.object({
@@ -52,6 +52,8 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ success: true });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error reordering questions:', error);
     return NextResponse.json(
       { error: 'Failed to reorder questions' },

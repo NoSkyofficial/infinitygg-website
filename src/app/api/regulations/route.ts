@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission, logAudit } from '@/lib/permissions';
+import { requirePermission, logAudit, authErrorResponse } from '@/lib/permissions';
 import { z } from 'zod';
 
 const regulationSchema = z.object({
@@ -55,6 +55,8 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ success: true, version: regulation });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error creating regulation version:', error);
     return NextResponse.json(
       { error: 'Failed to save regulation' },

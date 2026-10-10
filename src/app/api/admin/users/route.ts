@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission } from '@/lib/permissions';
+import { requirePermission, authErrorResponse } from '@/lib/permissions';
 
 export async function GET() {
   try {
@@ -21,6 +21,8 @@ export async function GET() {
     });
     return NextResponse.json({ users });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
   }
 }

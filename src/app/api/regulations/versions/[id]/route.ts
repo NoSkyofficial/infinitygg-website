@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission } from '@/lib/permissions';
+import { requirePermission, authErrorResponse } from '@/lib/permissions';
 
 export async function GET(
   request: NextRequest,
@@ -45,6 +45,8 @@ export async function GET(
     
     return NextResponse.json({ version: mappedVersion });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error fetching version:', error);
     return NextResponse.json(
       { error: 'Failed to fetch version' },

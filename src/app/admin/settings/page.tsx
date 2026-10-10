@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Settings, Save, Power, ToggleLeft, ToggleRight, Link as LinkIcon } from "lucide-react";
+import { Settings, Save, ToggleLeft, ToggleRight, Link as LinkIcon } from "lucide-react";
 import PermissionGuard from "@/components/PermissionGuard";
 import AdminHeader from "@/components/AdminHeader";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -13,8 +13,6 @@ interface SystemSettings {
   showStatus: boolean;
   showFAQ: boolean;
   showWhitelist: boolean;
-  maintenanceMode: boolean;
-  maintenanceMessage: string;
   discordInvite: string;
   shopUrl: string;
   twitterUrl: string;
@@ -29,8 +27,6 @@ export default function AdminSettingsPage() {
     showStatus: true,
     showFAQ: true,
     showWhitelist: true,
-    maintenanceMode: false,
-    maintenanceMessage: "Strona w trakcie konserwacji. Wrócimy wkrótce!",
     discordInvite: "https://discord.gg/infinitygg",
     shopUrl: "https://shop.infinitygg.pl",
     twitterUrl: "https://twitter.com/infinitygg",
@@ -214,50 +210,6 @@ export default function AdminSettingsPage() {
 
         <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
-            <Power className="w-5 h-5 mr-2" />
-            Tryb Konserwacji
-          </h3>
-          
-          <div className="space-y-4">
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-              <button
-                onClick={() => toggleSetting("maintenanceMode")}
-                className="flex items-center justify-between w-full mb-3"
-              >
-                <span className="text-white font-medium">
-                  {settings.maintenanceMode ? "Aktywny" : "Nieaktywny"}
-                </span>
-                {settings.maintenanceMode ? (
-                  <ToggleRight className="w-8 h-8 text-red-500" />
-                ) : (
-                  <ToggleLeft className="w-8 h-8 text-gray-500" />
-                )}
-              </button>
-              {settings.maintenanceMode && (
-                <p className="text-red-400 text-sm">
-                  ⚠️ Tryb konserwacji jest włączony! Użytkownicy widzą splash screen.
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-white font-medium mb-2">
-                Komunikat konserwacji
-              </label>
-              <textarea
-                value={settings.maintenanceMessage}
-                onChange={(e) =>
-                  setSettings({ ...settings, maintenanceMessage: e.target.value })
-                }
-                className="w-full px-4 py-3 bg-gray-800 text-white rounded-lg border border-[#26a69a]/20 focus:border-[#26a69a]/50 focus:outline-none resize-none"
-                rows={4}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
-          <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
             <LinkIcon className="w-5 h-5 mr-2" />
             Linki Społecznościowe
           </h3>
@@ -339,12 +291,6 @@ export default function AdminSettingsPage() {
               <span className="text-gray-400">Whitelist:</span>
               <span className={settings.showWhitelist ? "text-green-400" : "text-red-400"}>
                 {settings.showWhitelist ? "Dostępny" : "Niedostępny"}
-              </span>
-            </div>
-            <div className="p-3 bg-gray-800 rounded-lg flex justify-between">
-              <span className="text-gray-400">Maintenance:</span>
-              <span className={settings.maintenanceMode ? "text-red-400" : "text-green-400"}>
-                {settings.maintenanceMode ? "Włączony" : "Wyłączony"}
               </span>
             </div>
           </div>

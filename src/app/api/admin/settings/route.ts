@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission, logAudit } from '@/lib/permissions';
+import { requirePermission, logAudit, authErrorResponse } from '@/lib/permissions';
 import { z } from 'zod';
 
 const settingsSchema = z.object({
@@ -47,6 +47,8 @@ export async function PUT(request: NextRequest) {
     
     return NextResponse.json({ success: true, settings: updates });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error updating settings:', error);
     return NextResponse.json(
       { error: 'Failed to update settings' },

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission } from '@/lib/permissions';
+import { requirePermission, authErrorResponse } from '@/lib/permissions';
 
 export async function GET(request: NextRequest) {
   try {
@@ -49,6 +49,8 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ logs, total, page, limit });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error fetching audit logs:', error);
     return NextResponse.json(
       { error: 'Failed to fetch audit logs' },

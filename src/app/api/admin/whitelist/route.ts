@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requirePermission } from '@/lib/permissions';
+import { requirePermission, authErrorResponse } from '@/lib/permissions';
 
 // GET /api/admin/whitelist - Get all applications (admin only)
 export async function GET(request: NextRequest) {
@@ -39,6 +39,8 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({ applications });
   } catch (error) {
+    const authRes = authErrorResponse(error);
+    if (authRes) return authRes;
     console.error('Error fetching applications:', error);
     return NextResponse.json(
       { error: 'Failed to fetch applications' },
