@@ -68,10 +68,10 @@ export async function getCurrentAdmin() {
 
 export async function requireAuth() {
   const session = await getServerSession();
-  if (!session?.user) {
+  if (!session?.user?.id) {
     throw new Error('Authentication required');
   }
-  return session;
+  return session as typeof session & { user: { id: string } };
 }
 
 export async function requireAdmin() {

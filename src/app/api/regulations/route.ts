@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     await logAudit(
       admin.userId,
       'REGULATION_UPDATED',
-      regulation.id,
+      String(regulation.id),
       'RegulationVersion',
       {
         version: newVersion,

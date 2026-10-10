@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     await logAudit(
       admin.userId,
       'QUESTIONS_REORDERED',
-      null,
+      undefined,
       'WhitelistQuestion',
       {
         newOrder: questions,

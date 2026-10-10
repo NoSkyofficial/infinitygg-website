@@ -36,7 +36,7 @@ export async function PUT(request: NextRequest) {
     await logAudit(
       admin.userId,
       'SYSTEM_SETTINGS_CHANGED',
-      null,
+      undefined,
       'SystemSettings',
       {
         changedSettings: Object.keys(settings),

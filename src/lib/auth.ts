@@ -82,7 +82,7 @@ export const authConfig = {
 
           const newAdmin = await prisma.adminUser.create({
             data: {
-              userId: user.id,
+              userId: user.id as string,
               discordId: account.providerAccountId,
               discordTag: user.name || "Unknown",
               role: "InfinityGG_Team",
