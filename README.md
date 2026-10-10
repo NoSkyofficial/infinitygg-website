@@ -1,193 +1,139 @@
-# InfinityGG - Full-Stack Admin System Update
+# InfinityGG - strona, system whitelist i panel administratora
 
-## 🚀 Szybki Start
+Aplikacja webowa dla serwera GTA V RolePlay **InfinityGG**. Zawiera stronę publiczną z regulaminem i dokumentami, system podań na whitelistę z logowaniem przez Discord oraz panel administratora z uprawnieniami opartymi o role.
 
-1. **Rozpakuj archiwum**
-```bash
-unzip infinitygg-update.zip
-cd infinitygg-update
-```
+## Stack
 
-2. **Zainstaluj zależności**
-```bash
-npm install
-```
+- Next.js 15.5 (App Router), React 19, TypeScript
+- Prisma 5 z bazą PostgreSQL
+- Auth.js (next-auth 5 beta) z providerem Discord
+- Tailwind CSS 4, TipTap (edytor regulaminu), Zod (walidacja), axios (Discord API)
 
-3. **Skonfiguruj zmienne środowiskowe**
-```bash
-cp .env.example .env
-# Edytuj .env i uzupełnij wszystkie zmienne
-```
+## Funkcje
 
-4. **Skonfiguruj bazę danych**
-```bash
-# Uruchom PostgreSQL
-npx prisma generate
-npx prisma migrate dev --name init
-```
+### Strona publiczna
+- `/` - strona główna (sekcje: hero, wartości, FAQ, stopka)
+- `/regulamin` - regulamin pobierany z API (`/api/regulations/public`)
+- `/tos` i `/privacy` - warunki korzystania i polityka prywatności
+- `/sklep` i `/wip` - strony zastępcze (strona sklepu zawiera jeszcze tekst przykładowy)
 
-5. **Uruchom projekt**
-```bash
-npm run dev
-```
-
-Aplikacja dostępna pod: http://localhost:3000
-
-## 📁 Struktura Projektu
-
-```
-infinitygg-update/
-├── prisma/
-│   └── schema.prisma           # Schemat bazy danych
-├── src/
-│   ├── app/
-│   │   ├── admin/              # Panel administratora
-│   │   ├── whitelist/          # System whitelist
-│   │   ├── auth/               # Autoryzacja
-│   │   ├── api/                # API routes
-│   │   │   ├── auth/           # NextAuth endpoints
-│   │   │   ├── admin/          # Admin API
-│   │   │   └── whitelist/      # Whitelist API
-│   │   └── ...                 # Pozostałe strony
-│   ├── components/             # Komponenty React
-│   └── lib/
-│       ├── auth.ts             # Konfiguracja Auth.js
-│       ├── prisma.ts           # Prisma Client
-│       ├── permissions.ts      # System RBAC
-│       └── discord.ts          # Discord API
-├── .env.example                # Przykładowe zmienne środowiskowe
-├── INSTALLATION.md             # Szczegółowa instrukcja instalacji
-├── package.json
-└── README.md                   # Ten plik
-```
-
-## ✨ Nowe Funkcje
-
-### 1. Panel Administratora (`/admin`)
-- Dashboard z statystykami
-- Zarządzanie użytkownikami i rolami
-- Whitelist Management
-- Edycja pytań whitelist
-- Edycja treści stron
-- Ustawienia systemu
-- Logi audytu
-
-### 2. System Whitelist (`/whitelist`)
-- Autologowanie przez Discord OAuth
-- Formularz podania z dynamicznymi pytaniami
+### System whitelist (`/whitelist`)
+- Logowanie przez Discord (zakresy: `identify`, `email`, `guilds`, `guilds.members.read`)
+- Formularz podania z pytaniami z bazy (model `WhitelistQuestion`; typy pytań: TEXT, TEXTAREA, NUMBER, SELECT)
 - Historia własnych podań
-- Automatyczne powiadomienia Discord
-- Nadawanie ról Discord po zaakceptowaniu
+- Jedno aktywne podanie naraz (statusy `SENT` i `IN_REVIEW`)
 
-### 3. Edycja Regulaminu
-- Tryb edytora WYSIWYG
-- Wersjonowanie zmian
-- Historia edycji
+### Panel administratora (`/admin`)
+- Dashboard ze statystykami (`/api/admin/stats`)
+- Użytkownicy: zmiana roli, dodatkowych uprawnień i statusu aktywności, usuwanie
+- Podania: lista z filtrowaniem po statusie, zmiana statusu (`IN_REVIEW`, `APPROVED`, `REJECTED` z powodem)
+- Pytania do whitelisty: dodawanie, edycja, usuwanie, zmiana kolejności
+- Regulamin: edycja, historia wersji, porównanie wersji i przywracanie wersji
+- Logi audytu zapisywane przy operacjach administracyjnych (tabela `audit_logs`)
+- Ustawienia: formularz zapisujący wartości w tabeli `system_settings`
 
-### 4. System Ról i Uprawnień (RBAC)
-- **root** - Pełen dostęp
-- **contentEditor** - Edycja treści
-- **InfinityGG-Team** - Podstawowe funkcje admina
-- **Whitelist Checker** - Zarządzanie whitelistą
+### Role i uprawnienia (`src/lib/permissions.ts`)
 
-### 5. Discord Integration
-- OAuth2 login
-- Webhooks dla powiadomień
-- Automatyczne nadawanie/odbieranie ról
-- Bot commands (opcjonalnie)
+| Rola | Uprawnienia |
+|---|---|
+| `root` | wszystkie (`all`) |
+| `contentEditor` | `edit_regulations`, `edit_content`, `view_audit_logs` |
+| `InfinityGG_Team` | `view_audit_logs`, `view_applications` |
+| `Whitelist_Checker` | `view_applications`, `review_applications`, `manage_whitelist` |
 
-## 🔐 Zmienne Środowiskowe
+Nowe konto (po pierwszym logowaniu przez Discord) otrzymuje rolę `InfinityGG_Team`. Dodatkowe uprawnienia zapisane w polu `permissions` działają obok roli.
 
-Wszystkie wymagane zmienne znajdują się w `.env.example`. 
-Najważniejsze:
+### Integracja z Discordem (`src/lib/discord.ts`)
+- Akceptacja podania: nadanie roli whitelisty na serwerze i powiadomienie przez webhook
+- Odrzucenie podania: powiadomienie przez webhook (rola nie jest odbierana)
 
-```env
-# Database
-DATABASE_URL="postgresql://..."
+## Struktura katalogów
 
-# NextAuth
-NEXTAUTH_SECRET="..."
-NEXTAUTH_URL="http://localhost:3000"
-
-# Discord OAuth
-DISCORD_CLIENT_ID="..."
-DISCORD_CLIENT_SECRET="..."
-DISCORD_BOT_TOKEN="..."
-
-# Discord Webhooks & IDs
-DISCORD_WEBHOOK_WHITELIST_APPROVED="..."
-DISCORD_WEBHOOK_WHITELIST_REJECTED="..."
-DISCORD_GUILD_ID="..."
-DISCORD_WHITELIST_ROLE_ID="..."
+```
+src/
+  app/            strony i API (App Router)
+    admin/        panel administratora
+    api/          route handlers: auth, admin, regulations, whitelist
+    whitelist/    formularz podania
+    auth/         strony logowania i błędu
+  components/     komponenty UI (edytor, porównanie wersji, ...)
+  lib/            auth.ts, prisma.ts, permissions.ts, discord.ts
+  middleware.ts   ochrona ścieżek /admin i /whitelist
+prisma/
+  schema.prisma   schemat bazy danych
+  seed.ts         dane startowe (pytania whitelisty)
+docker-compose.yml  PostgreSQL 16 do uruchomienia lokalnie
 ```
 
-## 📝 API Endpoints
+## Wymagania
 
-### Publiczne
-- `GET /api/config` - Pobierz konfigurację strony
-- `GET /api/regulamin` - Pobierz regulamin
-- `GET /api/admin/questions` - Pobierz pytania whitelist
+- Node.js 20 lub nowszy
+- PostgreSQL 14+ (lub Docker, z `docker-compose.yml`)
+- Aplikacja Discord z OAuth2 oraz bot na serwerze (szczegóły w `INSTALLATION.md`)
 
-### Autoryzowane (wymaga logowania)
-- `GET /api/whitelist` - Pobierz swoje podania
-- `POST /api/whitelist` - Wyślij nowe podanie
-
-### Admin Only
-- `GET /api/admin/whitelist` - Pobierz wszystkie podania
-- `PATCH /api/whitelist/[id]/status` - Zmień status podania
-- `POST /api/admin/questions` - Dodaj pytanie
-- `GET /api/admin/stats` - Statystyki systemu
-
-## 🛠️ Komendy
+## Uruchomienie lokalne
 
 ```bash
-# Development
+git clone https://github.com/NoSkyofficial/infinitygg-website.git
+cd infinitygg-website
+npm install
+cp .env.example .env
+# uzupełnij wartości w .env
+docker compose up -d        # opcjonalnie: PostgreSQL z docker-compose.yml
+npx prisma migrate dev --name init
 npm run dev
-
-# Production build
-npm run build
-npm run start
-
-# Database
-npx prisma generate        # Generuj Prisma Client
-npx prisma migrate dev     # Uruchom migracje
-npx prisma studio          # Otwórz Prisma Studio
-npx prisma db seed         # Seed danych
-
-# Linting
-npm run lint
 ```
 
-## 🚨 Pierwsze uruchomienie
+Aplikacja będzie dostępna pod adresem `http://localhost:3000`.
 
-1. Zaloguj się przez Discord
-2. W bazie danych nadaj sobie rolę `root`:
+## Zmienne środowiskowe
+
+Lista zgodna z `.env.example`:
+
+| Zmienna | Używana w | Opis |
+|---|---|---|
+| `DATABASE_URL` | `prisma/schema.prisma` | Adres połączenia z PostgreSQL |
+| `NEXTAUTH_SECRET` | Auth.js | Sekret do podpisywania sesji |
+| `NEXTAUTH_URL` | Auth.js | Publiczny adres aplikacji |
+| `DISCORD_CLIENT_ID` | `src/lib/auth.ts` | ID aplikacji Discord (OAuth2) |
+| `DISCORD_CLIENT_SECRET` | `src/lib/auth.ts` | Sekret aplikacji Discord (OAuth2) |
+| `DISCORD_BOT_TOKEN` | `src/lib/discord.ts` | Token bota do nadawania ról |
+| `DISCORD_GUILD_ID` | `src/lib/discord.ts` | ID serwera Discord |
+| `DISCORD_WHITELIST_ROLE_ID` | `src/lib/discord.ts` | ID roli whitelisty |
+| `DISCORD_WEBHOOK_WHITELIST_APPROVED` | `src/lib/discord.ts` | Webhook dla zaakceptowanych podań |
+| `DISCORD_WEBHOOK_WHITELIST_REJECTED` | `src/lib/discord.ts` | Webhook dla odrzuconych podań |
+
+## Pierwsze uruchomienie
+
+1. Uruchom aplikację i zaloguj się przez Discord (`http://localhost:3000/auth/signin`). Przy pierwszym logowaniu tworzony jest rekord w tabeli `admin_users` z rolą `InfinityGG_Team`.
+2. Nadaj sobie rolę `root` w bazie danych:
 
 ```sql
-UPDATE "AdminUser" 
-SET role = 'root', 
+UPDATE admin_users
+SET role = 'root',
     permissions = ARRAY['all']::text[]
 WHERE "discordId" = 'TWOJE_DISCORD_ID';
 ```
 
-3. Przejdź do `/admin` i skonfiguruj system
+3. Wejdź na `http://localhost:3000/admin`.
 
-## 📚 Dokumentacja
+## Skrypty npm
 
-Szczegółowa dokumentacja dostępna w:
-- `INSTALLATION.md` - Pełna instrukcja instalacji i konfiguracji
-- [Next.js Docs](https://nextjs.org/docs)
-- [Prisma Docs](https://www.prisma.io/docs)
-- [NextAuth.js Docs](https://next-auth.js.org)
+| Skrypt | Działanie |
+|---|---|
+| `npm run dev` | serwer deweloperski (Turbopack) |
+| `npm run build` | build produkcyjny |
+| `npm run start` | uruchomienie zbudowanej aplikacji |
+| `npm run lint` | lint (`next lint`) |
+| `npm run db:push` | synchronizacja schematu z bazą |
+| `npm run db:migrate` | migracje Prisma (`migrate dev`) |
+| `npm run db:studio` | Prisma Studio |
+| `npm run db:seed` | dane startowe (`prisma/seed.ts`, uruchamiane przez `tsx`) |
 
-## 🐛 Troubleshooting
+## Dokumentacja
 
-Zobacz sekcję Troubleshooting w `INSTALLATION.md`
+- `INSTALLATION.md` - szczegółowa instalacja, konfiguracja Discord OAuth i rozwiązywanie problemów
 
-## 📄 Licencja
+## Licencja
 
 Copyright © 2024 InfinityGG. Wszelkie prawa zastrzeżone.
-
----
-
-**Zbudowane z ❤️ dla społeczności InfinityGG**
