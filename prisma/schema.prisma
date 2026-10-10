@@ -170,20 +170,6 @@ enum QuestionType {
   SELECT    // Wybór z listy
 }
 
-// ==================== CONTENT MANAGEMENT ====================
-
-model PageContent {
-  id        String   @id @default(cuid())
-  page      String   @unique // e.g., 'faq', 'rules', 'home'
-  content   Json     // Structured content
-  
-  updatedBy String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("page_content")
-}
-
 // ==================== SYSTEM SETTINGS ====================
 
 model SystemSettings {
@@ -216,35 +202,4 @@ model AuditLog {
   @@index([userId])
   @@index([action])
   @@index([createdAt])
-}
-
-// ==================== MODERATION ====================
-
-model ModerationEvent {
-  id          String   @id @default(cuid())
-  title       String
-  description String?  @db.Text
-  eventType   String   // 'recruitment', 'server_event', 'update'
-  startDate   DateTime
-  endDate     DateTime?
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("moderation_events")
-  @@index([startDate])
-}
-
-// ==================== MAINTENANCE MODE ====================
-
-model MaintenanceMode {
-  id        String   @id @default(cuid())
-  enabled   Boolean  @default(false)
-  message   String?  @db.Text
-  
-  startedAt DateTime?
-  endedAt   DateTime?
-  updatedAt DateTime @updatedAt
-
-  @@map("maintenance_mode")
 }
