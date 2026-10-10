@@ -39,13 +39,7 @@ export const authConfig = {
               active: adminProfile.active,
             };
             
-            console.log('[Auth JWT] Admin loaded:', {
-              userId: token.id,
-              role: adminProfile.role,
-              permissions: adminProfile.permissions,
-            });
           } else {
-            console.log('[Auth JWT] No admin profile found for userId:', token.id);
             token.admin = null;
           }
         } catch (error) {
@@ -62,17 +56,12 @@ export const authConfig = {
         session.user.id = token.id as string;
         (session.user as any).admin = token.admin;
         
-        console.log('[Auth Session] Session created:', {
-          userId: session.user.id,
-          admin: token.admin,
-        });
       }
       return session;
     },
   },
   events: {
     async linkAccount({ user, account }) {
-      console.log("[Event] linkAccount called - user:", user.id, "provider:", account.provider);
       
       if (account.provider === "discord") {
         try {
@@ -81,7 +70,6 @@ export const authConfig = {
           });
 
           if (existingAdmin) {
-            console.log("[Event] AdminUser exists, updating lastLogin");
             await prisma.adminUser.update({
               where: { id: existingAdmin.id },
               data: {
@@ -92,7 +80,6 @@ export const authConfig = {
             return;
           }
 
-          console.log("[Event] Creating new AdminUser");
           const newAdmin = await prisma.adminUser.create({
             data: {
               userId: user.id,
@@ -103,7 +90,6 @@ export const authConfig = {
               lastLogin: new Date(),
             },
           });
-          console.log("[Event] AdminUser created:", newAdmin.id);
         } catch (error) {
           console.error("[Event] Error in linkAccount:", error);
         }
