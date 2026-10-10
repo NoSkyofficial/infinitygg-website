@@ -1,6 +1,6 @@
 # InfinityGG - strona, system whitelist i panel administratora
 
-Aplikacja webowa dla serwera GTA V RolePlay **InfinityGG**. Zawiera stronę publiczną z regulaminem i dokumentami, system podań na whitelistę z logowaniem przez Discord oraz panel administratora z uprawnieniami opartymi o role.
+Aplikacja webowa dla serwera FiveM RP **InfinityGG**. Zawiera stronę publiczną z regulaminem i dokumentami, system podań na whitelistę z logowaniem przez Discord oraz panel administratora z uprawnieniami opartymi o role.
 
 ## Stack
 
@@ -15,7 +15,7 @@ Aplikacja webowa dla serwera GTA V RolePlay **InfinityGG**. Zawiera stronę publ
 - `/` - strona główna (sekcje: hero, wartości, FAQ, stopka)
 - `/regulamin` - regulamin pobierany z API (`/api/regulations/public`)
 - `/tos` i `/privacy` - warunki korzystania i polityka prywatności
-- `/sklep` i `/wip` - strony zastępcze (strona sklepu zawiera jeszcze tekst przykładowy)
+- `/wip` - strona zastępcza („W trakcie tworzenia”)
 
 ### System whitelist (`/whitelist`)
 - Logowanie przez Discord (zakresy: `identify`, `email`, `guilds`, `guilds.members.read`)
@@ -136,4 +136,4 @@ WHERE "discordId" = 'TWOJE_DISCORD_ID';
 
 ## Licencja
 
-Copyright © 2024 InfinityGG. Wszelkie prawa zastrzeżone.
+Copyright © 2025 InfinityGG. Wszelkie prawa zastrzeżone.

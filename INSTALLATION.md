@@ -354,7 +354,6 @@ W razie problemów:
 - ✨ Dodano edytor regulaminu z wersjonowaniem
 - ✨ Dodano zarządzanie użytkownikami i rolami
 - ✨ Dodano logi audytu
-- ✨ Dodano tryb maintenance
 - 🔧 Aktualizacja do Next.js 15
 - 🔧 Dodanie Prisma ORM
 - 🔧 Integracja Auth.js (Discord OAuth)
