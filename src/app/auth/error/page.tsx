@@ -13,7 +13,7 @@ export default function AuthError() {
         <p className="text-gray-400 mb-4">
           Error: {error || "Unknown error occurred"}
         </p>
-        
+        <a
           href="/auth/signin"
           className="block w-full text-center px-6 py-3 bg-[#26a69a] hover:bg-[#00897b] text-white rounded-lg transition-colors"
         >
