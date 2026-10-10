@@ -40,11 +40,12 @@ async function main() {
   ];
 
   for (const q of questions) {
-    await prisma.whitelistQuestion.upsert({
-      where: { order: q.order },
-      update: q,
-      create: q,
-    });
+    const existing = await prisma.whitelistQuestion.findFirst({ where: { order: q.order } });
+    if (existing) {
+      await prisma.whitelistQuestion.update({ where: { id: existing.id }, data: q });
+    } else {
+      await prisma.whitelistQuestion.create({ data: q });
+    }
   }
 
   console.log('Seeding completed!');
