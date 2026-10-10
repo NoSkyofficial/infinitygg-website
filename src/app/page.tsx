@@ -4,7 +4,6 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { ChevronDown, Menu, X, Users, ExternalLink, Twitter, Youtube, MessageCircle, Clock, Server, Zap, Shield, TrendingUp } from 'lucide-react';
 import { SiDiscord } from "react-icons/si";
 
-// Types and context setup (keeping existing structure)
 export interface SiteConfig {
   showProgressBar: boolean;
   progressValue: number;
@@ -176,7 +175,6 @@ const AnimatedBackground: React.FC = () => {
 
 // ==================== COMPONENTS ====================
 
-// Header Component
 const Header: React.FC<{ onAdminClick: () => void }> = ({ onAdminClick }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null);
@@ -323,7 +321,6 @@ const Header: React.FC<{ onAdminClick: () => void }> = ({ onAdminClick }) => {
   );
 };
 
-// Progress Bar Component - teraz sticky
 const ProgressBar: React.FC = () => {
   const { config } = useContext(ConfigContext);
   
@@ -366,7 +363,6 @@ const ProgressBar: React.FC = () => {
   );
 };
 
-// Hero Section
 const Hero: React.FC = () => {
   const { config } = useContext(ConfigContext);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -444,7 +440,6 @@ const Hero: React.FC = () => {
   );
 };
 
-// Value Cards
 const ValueCards: React.FC = () => {
   const cards = [
     {
@@ -504,7 +499,6 @@ const ValueCards: React.FC = () => {
   );
 };
 
-// FAQ Accordion
 const FAQAccordion: React.FC = () => {
   const { config } = useContext(ConfigContext);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -599,7 +593,6 @@ const FAQAccordion: React.FC = () => {
   );
 }; */
 
-// Footer
 const Footer: React.FC = () => {
   const year = new Date().getFullYear();
   

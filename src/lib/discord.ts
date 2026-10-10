@@ -34,9 +34,6 @@ class DiscordClient {
     this.guildId = process.env.DISCORD_GUILD_ID || '';
   }
 
-  /**
-   * Send message to Discord webhook
-   */
   async sendWebhook(webhookUrl: string, payload: DiscordWebhookPayload) {
     try {
       await axios.post(webhookUrl, payload);
@@ -47,9 +44,6 @@ class DiscordClient {
     }
   }
 
-  /**
-   * Add role to Discord member
-   */
   async addRoleToMember(userId: string, roleId: string) {
     try {
       await axios.put(
@@ -68,9 +62,6 @@ class DiscordClient {
     }
   }
 
-  /**
-   * Remove role from Discord member
-   */
   async removeRoleFromMember(userId: string, roleId: string) {
     try {
       await axios.delete(
@@ -88,9 +79,6 @@ class DiscordClient {
     }
   }
 
-  /**
-   * Get Discord member info
-   */
   async getMember(userId: string) {
     try {
       const response = await axios.get(
@@ -108,9 +96,6 @@ class DiscordClient {
     }
   }
 
-  /**
-   * Send whitelist approval notification
-   */
   async notifyWhitelistApproved(discordId: string, discordTag: string) {
     const webhookUrl = process.env.DISCORD_WEBHOOK_WHITELIST_APPROVED;
     if (!webhookUrl) return { success: false, error: 'Webhook URL not configured' };
@@ -118,7 +103,7 @@ class DiscordClient {
     const embed: DiscordEmbed = {
       title: '✅ Podanie Zaakceptowane',
       description: `<@${discordId}> Twoje podanie na whitelistę zostało zaakceptowane!`,
-      color: 0x26a69a, // Green color
+      color: 0x26a69a,
       fields: [
         {
           name: 'Użytkownik',
@@ -143,9 +128,6 @@ class DiscordClient {
     });
   }
 
-  /**
-   * Send whitelist rejection notification
-   */
   async notifyWhitelistRejected(
     discordId: string,
     discordTag: string,
@@ -157,7 +139,7 @@ class DiscordClient {
     const embed: DiscordEmbed = {
       title: '❌ Podanie Odrzucone',
       description: `<@${discordId}> Twoje podanie na whitelistę zostało odrzucone.`,
-      color: 0xff5252, // Red color
+      color: 0xff5252,
       fields: [
         {
           name: 'Użytkownik',
@@ -187,20 +169,15 @@ class DiscordClient {
     });
   }
 
-  /**
-   * Assign whitelist role and notify
-   */
   async approveWhitelist(discordId: string, discordTag: string) {
     const roleId = process.env.DISCORD_WHITELIST_ROLE_ID;
     if (!roleId) return { success: false, error: 'Whitelist role ID not configured' };
 
-    // Add role
     const roleResult = await this.addRoleToMember(discordId, roleId);
     if (!roleResult.success) {
       return roleResult;
     }
 
-    // Send notification
     const notifyResult = await this.notifyWhitelistApproved(discordId, discordTag);
     
     return {
@@ -210,11 +187,8 @@ class DiscordClient {
     };
   }
 
-  /**
-   * Remove whitelist role and notify rejection
-   */
+  /** Sends the rejection notification only. The whitelist role is not removed. */
   async rejectWhitelist(discordId: string, discordTag: string, reason: string) {
-    // Send notification
     const notifyResult = await this.notifyWhitelistRejected(discordId, discordTag, reason);
     
     return {

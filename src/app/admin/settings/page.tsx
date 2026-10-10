@@ -48,7 +48,6 @@ export default function AdminSettingsPage() {
       const response = await fetch("/api/admin/settings");
       if (response.ok) {
         const data = await response.json();
-        // Merge fetched settings with defaults
         if (data.settings && data.settings.length > 0) {
           const loadedSettings: any = {};
           data.settings.forEach((setting: any) => {
@@ -121,7 +120,6 @@ export default function AdminSettingsPage() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* General Settings */}
         <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
             <Settings className="w-5 h-5 mr-2" />
@@ -129,7 +127,6 @@ export default function AdminSettingsPage() {
           </h3>
           
           <div className="space-y-4">
-            {/* Progress Bar */}
             <div className="p-4 bg-gray-800 rounded-lg">
               <button
                 onClick={() => toggleSetting("showProgressBar")}
@@ -171,7 +168,6 @@ export default function AdminSettingsPage() {
               )}
             </div>
 
-            {/* Status Server */}
             <div className="p-4 bg-gray-800 rounded-lg">
               <button
                 onClick={() => toggleSetting("showStatus")}
@@ -186,7 +182,6 @@ export default function AdminSettingsPage() {
               </button>
             </div>
 
-            {/* FAQ */}
             <div className="p-4 bg-gray-800 rounded-lg">
               <button
                 onClick={() => toggleSetting("showFAQ")}
@@ -201,7 +196,6 @@ export default function AdminSettingsPage() {
               </button>
             </div>
 
-            {/* Whitelist */}
             <div className="p-4 bg-gray-800 rounded-lg">
               <button
                 onClick={() => toggleSetting("showWhitelist")}
@@ -218,7 +212,6 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Maintenance Mode */}
         <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
             <Power className="w-5 h-5 mr-2" />
@@ -263,7 +256,6 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Social Links */}
         <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4 flex items-center">
             <LinkIcon className="w-5 h-5 mr-2" />
@@ -321,7 +313,6 @@ export default function AdminSettingsPage() {
           </div>
         </div>
 
-        {/* Preview */}
         <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-6">
           <h3 className="text-white font-semibold text-lg mb-4">Podgląd</h3>
           

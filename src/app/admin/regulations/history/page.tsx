@@ -120,7 +120,6 @@ export default function RegulationsHistoryPage() {
           }
         />
 
-        {/* Versions List */}
         <div className="max-w-6xl mx-auto space-y-4">
           {versions.map((version, index) => (
             <div
@@ -133,7 +132,6 @@ export default function RegulationsHistoryPage() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
-                  {/* Checkbox */}
                   <input
                     type="checkbox"
                     checked={selectedVersions.includes(version.id)}
@@ -141,14 +139,12 @@ export default function RegulationsHistoryPage() {
                     className="mt-1 w-5 h-5 text-[#26a69a] bg-gray-700 border-gray-600 rounded focus:ring-[#26a69a]"
                   />
 
-                  {/* Version Badge */}
                   <div className="flex-shrink-0">
                     <div className="w-16 h-16 bg-gradient-to-br from-[#26a69a] to-[#00897b] rounded-2xl flex items-center justify-center">
                       <span className="text-white font-bold text-lg">v{version.version}</span>
                     </div>
                   </div>
 
-                  {/* Info */}
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-white font-semibold text-lg">
@@ -182,7 +178,6 @@ export default function RegulationsHistoryPage() {
                   </div>
                 </div>
 
-                {/* Actions */}
                 {index !== 0 && (
                   <button
                     onClick={() => handleRestore(version.id)}

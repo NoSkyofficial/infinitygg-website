@@ -35,7 +35,6 @@ export async function POST(request: NextRequest) {
     const admin = await requirePermission('manage_questions');
     const body = await request.json();
     
-    // Validate input
     const validation = questionSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
@@ -46,12 +45,10 @@ export async function POST(request: NextRequest) {
     
     const data = validation.data;
     
-    // Create question
     const question = await prisma.whitelistQuestion.create({
       data,
     });
     
-    // Log audit
     await logAudit(
       admin.userId,
       'QUESTION_CREATED',

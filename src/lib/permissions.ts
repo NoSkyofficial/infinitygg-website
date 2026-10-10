@@ -32,9 +32,6 @@ export const RolePermissions: Record<AdminRole, Permission[]> = {
   ],
 };
 
-/**
- * Check if a role has a specific permission
- */
 export function roleHasPermission(role: AdminRole, permission: Permission): boolean {
   const permissions = RolePermissions[role];
   return permissions.includes('all') || permissions.includes(permission);
@@ -48,19 +45,13 @@ export function userHasPermission(
   customPermissions: string[],
   permission: Permission
 ): boolean {
-  // Check if user has 'all' permission
   if (customPermissions.includes('all')) return true;
   
-  // Check custom permissions
   if (customPermissions.includes(permission)) return true;
   
-  // Check role permissions
   return roleHasPermission(role, permission);
 }
 
-/**
- * Get current user's admin profile
- */
 export async function getCurrentAdmin() {
   const session = await getServerSession();
   if (!session?.user?.id) return null;
@@ -75,9 +66,6 @@ export async function getCurrentAdmin() {
   return admin;
 }
 
-/**
- * Require authentication middleware
- */
 export async function requireAuth() {
   const session = await getServerSession();
   if (!session?.user) {
@@ -86,9 +74,6 @@ export async function requireAuth() {
   return session;
 }
 
-/**
- * Require admin middleware
- */
 export async function requireAdmin() {
   const session = await requireAuth();
   const admin = await getCurrentAdmin();
@@ -100,9 +85,6 @@ export async function requireAdmin() {
   return { session, admin };
 }
 
-/**
- * Require specific permission middleware
- */
 export async function requirePermission(permission: Permission) {
   const { admin } = await requireAdmin();
   
@@ -133,9 +115,6 @@ export async function checkPermission(permission: Permission): Promise<boolean> 
   }
 }
 
-/**
- * Log audit event
- */
 export async function logAudit(
   userId: string,
   action: string,
@@ -162,9 +141,6 @@ export async function logAudit(
   }
 }
 
-/**
- * Middleware wrapper for API routes
- */
 export function withAuth(handler: Function) {
   return async (req: Request, ...args: any[]) => {
     try {

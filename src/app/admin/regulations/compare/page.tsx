@@ -100,7 +100,6 @@ export default function CompareRegulationsPage() {
           }
         />
 
-        {/* Version Info Cards */}
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div className="bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl p-6">
             <h3 className="text-white font-bold text-lg mb-3">Wersja {version1.version}</h3>
@@ -118,7 +117,6 @@ export default function CompareRegulationsPage() {
           </div>
         </div>
 
-        {/* Diff Viewer */}
         <VersionDiff
           oldContent={version1.content}
           newContent={version2.content}

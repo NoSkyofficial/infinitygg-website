@@ -18,7 +18,6 @@ export async function PATCH(
     const admin = await requirePermission('review_applications');
     const body = await request.json();
     
-    // Validate input
     const validation = statusSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
@@ -29,7 +28,6 @@ export async function PATCH(
     
     const { status, rejectionReason } = validation.data;
     
-    // Get application
     const application = await prisma.whitelistApplication.findUnique({
       where: { id: params.id },
     });
@@ -41,7 +39,6 @@ export async function PATCH(
       );
     }
     
-    // Update application
     const updated = await prisma.whitelistApplication.update({
       where: { id: params.id },
       data: {
@@ -52,7 +49,6 @@ export async function PATCH(
       },
     });
     
-    // Handle Discord notifications and role assignment
     if (status === 'APPROVED') {
       await discordClient.approveWhitelist(
         application.discordId,
@@ -66,7 +62,6 @@ export async function PATCH(
       );
     }
     
-    // Log audit
     await logAudit(
       admin.userId,
       `WHITELIST_${status}`,

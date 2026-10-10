@@ -168,7 +168,6 @@ export default function WhitelistPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Previous Applications */}
         {applications.length > 0 && (
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-white mb-4">
@@ -202,7 +201,6 @@ export default function WhitelistPage() {
           </div>
         )}
 
-        {/* New Application Form */}
         {hasActiveApplication ? (
           <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl p-8 text-center">
             <AlertCircle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />

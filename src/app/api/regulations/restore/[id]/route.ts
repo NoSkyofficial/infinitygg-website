@@ -9,7 +9,6 @@ export async function POST(
   try {
     const admin = await requirePermission('edit_regulations');
     
-    // Get version to restore
     const versionToRestore = await prisma.regulationVersion.findUnique({
       where: { id: params.id },
     });
@@ -21,7 +20,6 @@ export async function POST(
       );
     }
     
-    // Get current max version
     const maxVersion = await prisma.regulationVersion.findFirst({
       orderBy: { version: 'desc' },
       select: { version: true },
@@ -29,7 +27,7 @@ export async function POST(
     
     const newVersion = (maxVersion?.version || 0) + 1;
     
-    // Create new version with restored content - używamy 'notes'
+    // Używamy pola 'notes'
     const restored = await prisma.regulationVersion.create({
       data: {
         content: versionToRestore.content,
@@ -39,7 +37,6 @@ export async function POST(
       },
     });
     
-    // Log audit
     await logAudit(
       admin.userId,
       'REGULATION_RESTORED',

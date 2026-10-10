@@ -16,7 +16,6 @@ interface LegalLayoutProps {
   sections: LegalSection[];
 }
 
-// Simple Header for legal pages
 const LegalHeader: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -81,7 +80,6 @@ const LegalHeader: React.FC = () => {
   );
 };
 
-// Footer for legal pages
 const LegalFooter: React.FC = () => {
   const year = new Date().getFullYear();
   
@@ -145,7 +143,6 @@ const LegalFooter: React.FC = () => {
   );
 };
 
-// Table of Contents
 const TableOfContents: React.FC<{ sections: LegalSection[]; activeId: string }> = ({ sections, activeId }) => {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -201,7 +198,6 @@ const TableOfContents: React.FC<{ sections: LegalSection[]; activeId: string }> 
   );
 };
 
-// Breadcrumbs
 const Breadcrumbs: React.FC<{ pageName: string }> = ({ pageName }) => {
   return (
     <nav className="flex items-center space-x-2 text-sm text-gray-400 mb-6">
@@ -215,7 +211,6 @@ const Breadcrumbs: React.FC<{ pageName: string }> = ({ pageName }) => {
   );
 };
 
-// Back to Top Button
 const BackToTop: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   
@@ -250,7 +245,6 @@ const BackToTop: React.FC = () => {
   );
 };
 
-// Main Layout Component
 export default function LegalLayout({ title, lastUpdated, sections }: LegalLayoutProps) {
   const [activeSection, setActiveSection] = useState('');
   
@@ -294,7 +288,6 @@ export default function LegalLayout({ title, lastUpdated, sections }: LegalLayou
   
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-[#1a2f2a]" />
         <div className="absolute top-20 right-20 w-96 h-96 bg-[#26a69a]/10 rounded-full blur-3xl" />

@@ -219,7 +219,6 @@ export default function AdminQuestionsPage() {
           }
         />
 
-        {/* Questions List */}
         <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl overflow-hidden">
           <div className="divide-y divide-[#26a69a]/10">
             {questions.map((question, index) => (
@@ -234,17 +233,14 @@ export default function AdminQuestionsPage() {
                 }`}
               >
                 <div className="flex items-start gap-4">
-                  {/* Drag Handle */}
                   <div className="flex items-center justify-center w-8 h-8 text-gray-500 hover:text-gray-300 transition-colors">
                     <GripVertical className="w-5 h-5" />
                   </div>
 
-                  {/* Question Number */}
                   <div className="flex items-center justify-center w-10 h-10 bg-[#26a69a]/20 text-[#26a69a] rounded-lg font-bold">
                     {question.order}
                   </div>
 
-                  {/* Question Content */}
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div>
@@ -299,7 +295,6 @@ export default function AdminQuestionsPage() {
                     </p>
                   </div>
 
-                  {/* Actions */}
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleEditQuestion(question)}
@@ -326,7 +321,6 @@ export default function AdminQuestionsPage() {
           )}
         </div>
 
-        {/* Edit/Create Modal */}
         {showModal && editingQuestion && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-gray-900 border border-[#26a69a]/30 rounded-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
@@ -346,7 +340,6 @@ export default function AdminQuestionsPage() {
               </div>
 
               <div className="space-y-6">
-                {/* Question Text */}
                 <div>
                   <label className="block text-white font-medium mb-2">
                     Treść pytania <span className="text-red-400">*</span>
@@ -365,7 +358,6 @@ export default function AdminQuestionsPage() {
                   />
                 </div>
 
-                {/* Question Type */}
                 <div>
                   <label className="block text-white font-medium mb-2">Typ pytania</label>
                   <select
@@ -452,7 +444,6 @@ export default function AdminQuestionsPage() {
                   </div>
                 )}
 
-                {/* Checkboxes */}
                 <div className="grid grid-cols-2 gap-4">
                   <label className="flex items-center p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition-colors">
                     <input

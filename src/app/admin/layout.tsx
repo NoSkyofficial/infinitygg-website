@@ -29,7 +29,7 @@ const navigation: NavItem[] = [
   { href: "/admin/users", label: "Użytkownicy", icon: Users, permission: "manage_users" },
   { href: "/admin/whitelist", label: "Podania WL", icon: FileText, permission: "view_applications" },
   { href: "/admin/whitelist/questions", label: "Pytania WL", icon: FileText, permission: "manage_questions" },
-  { href: "/admin/regulations/history", label: "Regulamin", icon: FileText, permission: "edit_regulations" }, // <-- NOWY
+  { href: "/admin/regulations/history", label: "Regulamin", icon: FileText, permission: "edit_regulations" },
   { href: "/admin/audit", label: "Logi Audytu", icon: Activity, permission: "view_audit_logs" },
   { href: "/admin/content", label: "Treść", icon: FileText, permission: "edit_content" },
   { href: "/admin/settings", label: "Ustawienia", icon: Settings, permission: "manage_system" },
@@ -67,7 +67,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -77,19 +76,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </button>
       </div>
 
-      {/* Sidebar - FIXED HEIGHT */}
       <aside
         className={`fixed top-0 left-0 h-screen w-64 bg-gray-900/95 backdrop-blur-sm border-r border-[#26a69a]/20 transform transition-transform duration-300 z-40 flex flex-col ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
-        {/* Header - Fixed */}
         <div className="p-6 border-b border-[#26a69a]/20 flex-shrink-0">
           <h1 className="text-2xl font-bold text-white mb-1">InfinityGG</h1>
           <p className="text-sm text-gray-400">Admin Panel</p>
         </div>
 
-        {/* Navigation - Scrollable */}
         <nav className="flex-1 overflow-y-auto py-4">
           {visibleNavigation.map((item) => {
             const isActive = pathname === item.href;
@@ -109,7 +105,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        {/* User Info - Fixed */}
         <div className="p-6 border-t border-[#26a69a]/20 flex-shrink-0">
           <div className="flex items-center mb-4">
             <img
@@ -135,12 +130,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      {/* Main Content - FIXED PADDING */}
       <main className="lg:ml-64 min-h-screen">
         {children}
       </main>
 
-      {/* Overlay for mobile */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"

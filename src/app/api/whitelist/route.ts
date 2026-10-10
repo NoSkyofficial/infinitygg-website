@@ -47,7 +47,6 @@ export async function POST(request: NextRequest) {
     const session = await requireAuth();
     const body = await request.json();
     
-    // Validate input
     const validation = applicationSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
@@ -58,7 +57,6 @@ export async function POST(request: NextRequest) {
     
     const { answers } = validation.data;
     
-    // Check if user has active application
     const existingActive = await prisma.whitelistApplication.findFirst({
       where: {
         userId: session.user.id,
@@ -75,7 +73,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Get user's Discord ID from admin profile
     const adminProfile = await prisma.adminUser.findUnique({
       where: { userId: session.user.id },
     });
@@ -87,7 +84,6 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Create application
     const application = await prisma.whitelistApplication.create({
       data: {
         userId: session.user.id,
@@ -98,7 +94,6 @@ export async function POST(request: NextRequest) {
       },
     });
     
-    // Log audit
     await logAudit(
       session.user.id,
       'WHITELIST_APPLICATION_SUBMITTED',

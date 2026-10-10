@@ -44,7 +44,6 @@ export default function SklepPage() {
   
   return (
     <div className="min-h-screen bg-gray-900">
-      {/* Animated Background */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-900 to-[#1a2f2a]" />
         <div className="absolute top-20 left-10 w-72 h-72 bg-[#26a69a]/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
@@ -52,33 +51,26 @@ export default function SklepPage() {
         <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-[#00897b]/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '2s' }} />
       </div>
       
-      {/* Header Spacer */}
       <div className="h-16" />
       
       <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
         <div className="max-w-4xl w-full">
-          {/* Main Card */}
           <div className="relative bg-gray-900/80 backdrop-blur-md border border-[#26a69a]/30 rounded-3xl p-8 md:p-12 shadow-2xl overflow-hidden">
-            {/* Animated glow effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#26a69a]/5 to-transparent animate-pulse" />
             
             <div className="relative z-10 text-center">
-              {/* Icon */}
               <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#26a69a] to-[#00897b] rounded-2xl mb-6 shadow-lg shadow-[#26a69a]/30 animate-bounce" style={{ animationDuration: '2s' }}>
                 <ShoppingBag className="w-10 h-10 text-white" />
               </div>
               
-              {/* Title */}
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 Sklep <span className="text-[#26a69a]">InfinityGG</span>
               </h1>
               
-              {/* Description */}
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
                 Wesprzyj rozwój serwera.
               </p>
               
-              {/* Countdown */}
               <div className="mb-8">
                 <div className="inline-block bg-gray-800/50 backdrop-blur-sm border border-[#26a69a]/30 rounded-xl px-6 py-3">
                   <p className="text-gray-400 text-sm mb-1">Przekierowanie za</p>
@@ -86,7 +78,6 @@ export default function SklepPage() {
                 </div>
               </div>
               
-              {/* CTA Button */}
               <button
                 onClick={handleRedirect}
                 className="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[#26a69a] to-[#00897b] hover:from-[#00897b] hover:to-[#26a69a] text-white text-lg font-semibold rounded-xl transition-all shadow-lg shadow-[#26a69a]/30 hover:shadow-[#26a69a]/50 hover:scale-105 mb-12"
@@ -95,7 +86,6 @@ export default function SklepPage() {
                 <ExternalLink className="w-5 h-5 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </button>
               
-              {/* Features Grid */}
               <div className="grid md:grid-cols-3 gap-6 mt-12">
                 {features.map((feature, index) => (
                   <div
@@ -111,7 +101,6 @@ export default function SklepPage() {
                 ))}
               </div>
               
-              {/* Info */}
               <div className="mt-8 pt-8 border-t border-[#26a69a]/20">
                 <p className="text-gray-500 text-sm">
                   💳 Bezpieczne płatności przez <span className="text-[#26a69a]">Tebex</span>
@@ -126,7 +115,6 @@ export default function SklepPage() {
             </div>
           </div>
           
-          {/* Back to Home */}
           <div className="text-center mt-8">
             <a
               href="/"

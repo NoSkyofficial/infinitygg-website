@@ -23,7 +23,6 @@ export async function PUT(request: NextRequest) {
     
     const { settings } = validation.data;
     
-    // Update each setting
     const updates = await Promise.all(
       Object.entries(settings).map(([key, value]) =>
         prisma.systemSettings.upsert({
@@ -34,7 +33,6 @@ export async function PUT(request: NextRequest) {
       )
     );
     
-    // Log audit
     await logAudit(
       admin.userId,
       'SYSTEM_SETTINGS_CHANGED',

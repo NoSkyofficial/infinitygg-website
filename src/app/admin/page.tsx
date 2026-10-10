@@ -57,14 +57,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
-      {/* Header */}
       <AdminHeader
         icon={LayoutDashboard}
         title="Dashboard"
         description="Przegląd systemu i statystyki"
       />
 
-      {/* Welcome Card */}
       <div className="mb-8 bg-gradient-to-br from-[#26a69a]/20 via-gray-900/40 to-transparent backdrop-blur-sm border border-[#26a69a]/30 rounded-2xl p-6">
         <div className="flex items-center gap-4">
           <img
@@ -83,9 +81,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {/* Total Users */}
         <div className="bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl p-6 hover:border-[#26a69a]/40 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -99,7 +95,6 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">Administratorzy</p>
         </div>
 
-        {/* Total Applications */}
         <div className="bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl p-6 hover:border-[#26a69a]/40 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -113,7 +108,6 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">Wszystkie podania</p>
         </div>
 
-        {/* Recent Activity */}
         <div className="bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl p-6 hover:border-[#26a69a]/40 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-[#26a69a]/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -127,7 +121,6 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">Aktywność</p>
         </div>
 
-        {/* Pending */}
         <div className="bg-gray-900/40 backdrop-blur-sm border border-yellow-500/20 rounded-2xl p-6 hover:border-yellow-500/40 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-yellow-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -141,7 +134,6 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">Oczekujące</p>
         </div>
 
-        {/* Approved */}
         <div className="bg-gray-900/40 backdrop-blur-sm border border-green-500/20 rounded-2xl p-6 hover:border-green-500/40 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -155,7 +147,6 @@ export default function AdminDashboard() {
           <p className="text-gray-400 text-sm">Zaakceptowane</p>
         </div>
 
-        {/* Rejected */}
         <div className="bg-gray-900/40 backdrop-blur-sm border border-red-500/20 rounded-2xl p-6 hover:border-red-500/40 transition-all group">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -170,7 +161,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Quick Actions */}
       <div className="bg-gray-900/40 backdrop-blur-sm border border-[#26a69a]/20 rounded-2xl p-6">
         <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
           <Activity className="w-5 h-5 text-[#26a69a]" />

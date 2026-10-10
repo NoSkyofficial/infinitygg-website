@@ -146,9 +146,7 @@ export default function AdminWhitelistPage() {
         description="Przeglądaj i zarządzaj podaniami"
       />
 
-        {/* Filters & Search */}
         <div className="mb-6 flex flex-wrap gap-4">
-          {/* Status Filter */}
           <div className="flex gap-2">
             {["ALL", "SENT", "IN_REVIEW", "APPROVED", "REJECTED"].map((status) => (
               <button
@@ -165,7 +163,6 @@ export default function AdminWhitelistPage() {
             ))}
           </div>
 
-          {/* Search by Discord ID */}
           <div className="flex-1 max-w-md">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -180,7 +177,6 @@ export default function AdminWhitelistPage() {
           </div>
         </div>
 
-        {/* Applications Table */}
         <div className="bg-gray-900/80 backdrop-blur-sm border border-[#26a69a]/20 rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-[#26a69a]/20">
@@ -252,7 +248,6 @@ export default function AdminWhitelistPage() {
           )}
         </div>
 
-        {/* View Modal */}
         {showModal && selectedApp && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-gray-900 border border-[#26a69a]/30 rounded-2xl max-w-3xl w-full p-8 max-h-[90vh] overflow-y-auto">
@@ -270,7 +265,6 @@ export default function AdminWhitelistPage() {
                 </button>
               </div>
 
-              {/* User Info */}
               <div className="mb-6 p-4 bg-gray-800/50 rounded-lg">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -300,7 +294,6 @@ export default function AdminWhitelistPage() {
                 </div>
               </div>
 
-              {/* Answers */}
               <div className="mb-6">
                 <h3 className="text-white font-semibold mb-4 flex items-center">
                   <MessageCircle className="w-5 h-5 mr-2" />
@@ -318,7 +311,6 @@ export default function AdminWhitelistPage() {
                 </div>
               </div>
 
-              {/* Rejection Reason (if rejected) */}
               {selectedApp.status === "REJECTED" && selectedApp.rejectionReason && (
                 <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
                   <p className="text-red-400 font-medium mb-2">Powód odrzucenia:</p>
@@ -326,7 +318,6 @@ export default function AdminWhitelistPage() {
                 </div>
               )}
 
-              {/* Actions */}
               {selectedApp.status === "SENT" && (
                 <div className="space-y-4">
                   <div>

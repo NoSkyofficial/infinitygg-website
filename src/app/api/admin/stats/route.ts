@@ -17,7 +17,6 @@ export async function GET() {
       activeAdmins,
       regulationVersions,
     ] = await Promise.all([
-      // Pending applications
       prisma.whitelistApplication.count({
         where: {
           status: {
@@ -25,9 +24,7 @@ export async function GET() {
           },
         },
       }),
-      // Total applications
       prisma.whitelistApplication.count(),
-      // Approved this week
       prisma.whitelistApplication.count({
         where: {
           status: 'APPROVED',
@@ -36,7 +33,6 @@ export async function GET() {
           },
         },
       }),
-      // Rejected this week
       prisma.whitelistApplication.count({
         where: {
           status: 'REJECTED',
@@ -45,13 +41,11 @@ export async function GET() {
           },
         },
       }),
-      // Active admins
       prisma.adminUser.count({
         where: {
           active: true,
         },
       }),
-      // Regulation versions
       prisma.regulationVersion.count(),
     ]);
     

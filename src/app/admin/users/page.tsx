@@ -42,7 +42,6 @@ const PERMISSIONS = [
   "review_applications",
 ];
 
-// Role permissions mapping
 const ROLE_PERMISSIONS: Record<string, string[]> = {
   root: ["all"],
   contentEditor: ["edit_regulations", "edit_content", "view_audit_logs"],
@@ -82,7 +81,6 @@ export default function AdminUsersPage() {
   const handleRoleChange = (newRole: string) => {
     if (!editingUser) return;
     
-    // Get base permissions from role
     const basePermissions = ROLE_PERMISSIONS[newRole] || [];
     
     // Merge with existing extra permissions (not from role)
@@ -183,14 +181,12 @@ export default function AdminUsersPage() {
   return (
     <PermissionGuard permission="manage_users">
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-8">
-        {/* Header */}
         <AdminHeader
           icon={Users}
           title="Zarządzanie Użytkownikami"
           description="Zarządzaj rolami i uprawnieniami administratorów"
         />
 
-        {/* Users Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {users.map((user) => (
             <div
@@ -283,7 +279,6 @@ export default function AdminUsersPage() {
           ))}
         </div>
 
-        {/* Edit Modal */}
         {showModal && editingUser && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-gray-900 border border-[#26a69a]/30 rounded-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
@@ -301,7 +296,6 @@ export default function AdminUsersPage() {
               </div>
 
               <div className="space-y-6">
-                {/* User Info */}
                 <div className="flex items-center">
                   <img
                     src={editingUser.user.image}
@@ -316,7 +310,6 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
 
-                {/* Role Selection */}
                 <div>
                   <label className="block text-white font-medium mb-2">Rola</label>
                   <select
@@ -335,7 +328,6 @@ export default function AdminUsersPage() {
                   </p>
                 </div>
 
-                {/* Permissions */}
                 <div>
                   <label className="block text-white font-medium mb-2">
                     Dodatkowe uprawnienia
@@ -374,7 +366,6 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
 
-                {/* Active Status */}
                 <div>
                   <label className="flex items-center cursor-pointer">
                     <input

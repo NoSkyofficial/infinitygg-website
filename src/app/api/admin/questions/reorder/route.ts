@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
       )
     );
     
-    // Log audit
     await logAudit(
       admin.userId,
       'QUESTIONS_REORDERED',

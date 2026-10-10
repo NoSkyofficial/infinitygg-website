@@ -29,7 +29,6 @@ export async function PATCH(
     
     const data = validation.data;
     
-    // Get current question for audit
     const currentQuestion = await prisma.whitelistQuestion.findUnique({
       where: { id: params.id },
     });
@@ -41,13 +40,11 @@ export async function PATCH(
       );
     }
     
-    // Update question
     const updated = await prisma.whitelistQuestion.update({
       where: { id: params.id },
       data,
     });
     
-    // Log audit
     await logAudit(
       admin.userId,
       'QUESTION_UPDATED',
@@ -79,7 +76,6 @@ export async function DELETE(
   try {
     const admin = await requirePermission('manage_questions');
     
-    // Get question for audit
     const question = await prisma.whitelistQuestion.findUnique({
       where: { id: params.id },
     });
@@ -91,12 +87,10 @@ export async function DELETE(
       );
     }
     
-    // Delete question
     await prisma.whitelistQuestion.delete({
       where: { id: params.id },
     });
     
-    // Log audit
     await logAudit(
       admin.userId,
       'QUESTION_DELETED',

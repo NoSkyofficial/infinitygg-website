@@ -7,12 +7,10 @@ export async function middleware(request: NextRequest) {
   const isWhitelistRoute = request.nextUrl.pathname.startsWith("/whitelist");
   const isAuthRoute = request.nextUrl.pathname.startsWith("/auth");
 
-  // Allow auth routes
   if (isAuthRoute) {
     return NextResponse.next();
   }
 
-  // For protected routes, check session
   if (isAdminRoute || isWhitelistRoute) {
     const session = await auth();
     

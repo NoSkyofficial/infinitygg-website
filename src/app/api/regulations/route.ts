@@ -23,7 +23,6 @@ export async function POST(request: NextRequest) {
     
     const { content, comment } = validation.data;
     
-    // Get current max version
     const maxVersion = await prisma.regulationVersion.findFirst({
       orderBy: { version: 'desc' },
       select: { version: true },
@@ -31,7 +30,7 @@ export async function POST(request: NextRequest) {
     
     const newVersion = (maxVersion?.version || 0) + 1;
     
-    // Create new version - używamy 'notes' zamiast 'comment'
+    // Używamy 'notes' zamiast 'comment'
     const regulation = await prisma.regulationVersion.create({
       data: {
         content,
@@ -41,7 +40,6 @@ export async function POST(request: NextRequest) {
       },
     });
     
-    // Log audit
     await logAudit(
       admin.userId,
       'REGULATION_UPDATED',

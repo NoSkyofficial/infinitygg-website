@@ -1,4 +1,3 @@
-// src/app/api/regulations/versions/route.ts
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requirePermission } from '@/lib/permissions';

@@ -28,7 +28,6 @@ export async function PATCH(
     
     const data = validation.data;
     
-    // Get current user data for audit log
     const currentUser = await prisma.adminUser.findUnique({
       where: { id: params.id },
     });
@@ -40,7 +39,6 @@ export async function PATCH(
       );
     }
     
-    // Update user
     const updated = await prisma.adminUser.update({
       where: { id: params.id },
       data,
@@ -55,7 +53,6 @@ export async function PATCH(
       },
     });
     
-    // Log audit
     await logAudit(
       admin.userId,
       'USER_ROLE_CHANGED',
@@ -91,7 +88,6 @@ export async function DELETE(
   try {
     const admin = await requirePermission('manage_users');
     
-    // Get user for audit log
     const user = await prisma.adminUser.findUnique({
       where: { id: params.id },
       include: {
@@ -110,12 +106,10 @@ export async function DELETE(
       );
     }
     
-    // Delete user
     await prisma.adminUser.delete({
       where: { id: params.id },
     });
     
-    // Log audit
     await logAudit(
       admin.userId,
       'USER_DELETED',
